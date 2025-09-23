@@ -23,7 +23,8 @@ public class CustomerController {
         log.debug("Get customers - Controller");
         return customerService.getCustomers();
     }
-    @GetMapping("/{customerId}")
+
+    @GetMapping("{customerId}")
     public Customer getCustomer(@PathVariable("customerId") UUID customerId) {
         log.debug("Get customer by id - Controller: {}", customerId);
         return customerService.getCustomerById(customerId);

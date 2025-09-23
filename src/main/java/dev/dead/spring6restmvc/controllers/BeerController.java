@@ -18,6 +18,20 @@ import java.util.UUID;
 @RequestMapping("/api/v1/beer")
 public class BeerController {
     private final BeerService beerService;
+
+    @SuppressWarnings("rawtypes")
+    @PutMapping("{beerId}")
+    public ResponseEntity updateBeer(@PathVariable("beerId") UUID beerId, @RequestBody Beer beer) {
+        log.debug("updateBeer beerId={} - Controller", beerId);
+        beerService.updateBeer(beerId, beer);
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.add("Location",
+                "/api/v1/beer/" + beerId);
+        return ResponseEntity
+                .noContent()
+                .headers(responseHeaders)
+                .build();
+    }
     @SuppressWarnings({"unchecked", "rawtypes"})
     @PostMapping
     public ResponseEntity addBeer(@RequestBody Beer beer) {
@@ -34,7 +48,7 @@ public class BeerController {
     }
 
 
-    @GetMapping("/{beerId}")
+    @GetMapping("{beerId}")
     public Beer getBeerById(@PathVariable("beerId") UUID beerId) {
         log.debug("Get Beer by Id - in Controller. Id: {}", beerId.toString());
         return beerService.getBeerById(beerId);
