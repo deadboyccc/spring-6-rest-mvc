@@ -7,24 +7,66 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @Slf4j
 public class BeerServiceImpl implements BeerService {
-    @Override
-    public Beer getBeerById(UUID id) {
-        log.info("Get Beer by Id - in service. Id: " + id.toString());
-        return Beer.builder()
-                .id(id)
+    private Map<UUID, Beer> beers = new HashMap<>();
+    public BeerServiceImpl() {
+        Beer beer1 = Beer.builder()
+                .id(UUID.randomUUID())
                 .beerName("Galaxy Cat")
                 .beerStyle(BeerStyle.PALE_ALE)
                 .upc(UUID.randomUUID().toString())
                 .quantityOnHand(3)
-                .createdDate(LocalDateTime.now())
-                .updateDate(LocalDateTime.now())
-                .price(new BigDecimal(11.25))
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .price(new BigDecimal("11.25"))
                 .version(1)
                 .build();
+
+        Beer beer2 = Beer.builder()
+                .id(UUID.randomUUID())
+                .beerName("Mango Bobs")
+                .beerStyle(BeerStyle.IPA)
+                .upc(UUID.randomUUID().toString())
+                .quantityOnHand(5)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .price(new BigDecimal("12.99"))
+                .version(1)
+                .build();
+
+        Beer beer3 = Beer.builder()
+                .id(UUID.randomUUID())
+                .beerName("Pinball Porter")
+                .beerStyle(BeerStyle.PORTER)
+                .upc(UUID.randomUUID().toString())
+                .quantityOnHand(7)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .price(new BigDecimal("9.50"))
+                .version(1)
+                .build();
+
+        beers.put(beer1.getId(), beer1);
+        beers.put(beer2.getId(), beer2);
+        beers.put(beer3.getId(), beer3);
+
+
     }
+    @Override
+    public List<Beer> getBeers() {
+        return new ArrayList<>(beers.values());
+
+    }
+
+
+    @Override
+    public Beer getBeerById(UUID id) {
+        log.info("Get Beer by Id - in service. Id: " + id.toString());
+        return beers.get(id);
+    }
+
 }
