@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,7 +21,7 @@ public class BeerController {
     @SuppressWarnings({"unchecked", "rawtypes"})
     @PostMapping
     public ResponseEntity addBeer(@RequestBody Beer beer) {
-        log.info("Add Beer - Controller: {}", beer.getBeerName());
+        log.debug("Add Beer - Controller: {}", beer.getBeerName());
         Beer savedBeer = beerService.saveNewBeer(beer);
         HttpHeaders  headers = new HttpHeaders();
         headers.add("Location", "/api/v1/beer/" + savedBeer.getId());
@@ -37,7 +36,7 @@ public class BeerController {
 
     @GetMapping("/{beerId}")
     public Beer getBeerById(@PathVariable("beerId") UUID beerId) {
-        log.info("Get Beer by Id - in Controller. Id: {}", beerId.toString());
+        log.debug("Get Beer by Id - in Controller. Id: {}", beerId.toString());
         return beerService.getBeerById(beerId);
     }
 }

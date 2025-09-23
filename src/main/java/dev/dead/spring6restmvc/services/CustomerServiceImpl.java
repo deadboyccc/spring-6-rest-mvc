@@ -46,14 +46,14 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public Customer getCustomerById(UUID id) {
-        log.info("Get customer by id - Service {}", id);
+        log.debug("Get customer by id - Service {}", id);
         return customers.get(id);
 
     }
 
     @Override
     public List<Customer> getCustomers() {
-        log.info("Get customers - Service");
+        log.debug("Get customers - Service");
         return new ArrayList<>(customers.values());
     }
 

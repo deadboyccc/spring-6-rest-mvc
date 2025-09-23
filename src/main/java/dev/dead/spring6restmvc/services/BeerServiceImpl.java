@@ -66,7 +66,7 @@ public class BeerServiceImpl implements BeerService {
 
     @Override
     public Beer saveNewBeer(Beer beer) {
-        log.info("Save Beer - Service : {}", beer.getBeerName());
+        log.debug("Save Beer - Service : {}", beer.getBeerName());
         Beer savedBeer = Beer.builder()
                 .id(UUID.randomUUID())
                 .createdAt(LocalDateTime.now())
@@ -86,7 +86,7 @@ public class BeerServiceImpl implements BeerService {
 
     @Override
     public Beer getBeerById(UUID id) {
-        log.info("Get Beer by Id - in service. Id: " + id.toString());
+        log.debug("Get Beer by Id - in service. Id: " + id.toString());
         return beers.get(id);
     }
 

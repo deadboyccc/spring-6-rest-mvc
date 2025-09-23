@@ -20,19 +20,19 @@ public class CustomerController {
     private final CustomerService customerService;
     @GetMapping
     public List<Customer> getCustomers() {
-        log.info("Get customers - Controller");
+        log.debug("Get customers - Controller");
         return customerService.getCustomers();
     }
     @GetMapping("/{customerId}")
     public Customer getCustomer(@PathVariable("customerId") UUID customerId) {
-        log.info("Get customer by id - Controller: {}", customerId);
+        log.debug("Get customer by id - Controller: {}", customerId);
         return customerService.getCustomerById(customerId);
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     @PostMapping
     public ResponseEntity createCustomer(@RequestBody Customer customer) {
-        log.info("Create customer - Controller: {}", customer.getCustomerName());
+        log.debug("Create customer - Controller: {}", customer.getCustomerName());
         Customer savedCustomer = customerService.saveNewCustomer(customer);
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.LOCATION, "/api/v1/customer/" + savedCustomer.getId());

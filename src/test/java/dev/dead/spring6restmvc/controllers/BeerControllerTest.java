@@ -8,7 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Slf4j
 @SpringBootTest
@@ -23,8 +23,8 @@ class BeerControllerTest {
     void getBeerById() {
         UUID id = UUID.randomUUID();
         Beer beer = controller.getBeerById(id);
-        log.info("get Beer By Id in Test. id: {}", id);
-        log.info("get Beer By Id in Test. beer: {}", beer);
+        log.debug("get Beer By Id in Test. id: {}", id);
+        log.debug("get Beer By Id in Test. beer: {}", beer);
         assertNotNull(beer);
     }
 }
