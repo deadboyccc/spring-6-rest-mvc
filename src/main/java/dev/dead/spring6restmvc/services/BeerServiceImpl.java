@@ -13,6 +13,7 @@ import java.util.*;
 @Slf4j
 public class BeerServiceImpl implements BeerService {
     private Map<UUID, Beer> beers = new HashMap<>();
+
     public BeerServiceImpl() {
         Beer beer1 = Beer.builder()
                 .id(UUID.randomUUID())
@@ -56,9 +57,29 @@ public class BeerServiceImpl implements BeerService {
 
 
     }
+
     @Override
     public List<Beer> getBeers() {
         return new ArrayList<>(beers.values());
+
+    }
+
+    @Override
+    public Beer saveNewBeer(Beer beer) {
+        log.info("Save Beer - Service : {}", beer.getBeerName());
+        Beer savedBeer = Beer.builder()
+                .id(UUID.randomUUID())
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .version(1)
+                .price(beer.getPrice())
+                .beerStyle(beer.getBeerStyle())
+                .beerName(beer.getBeerName())
+                .quantityOnHand(beer.getQuantityOnHand())
+                .upc(beer.getUpc())
+                .build();
+        beers.put(savedBeer.getId(), savedBeer);
+        return savedBeer;
 
     }
 
