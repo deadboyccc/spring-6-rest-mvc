@@ -36,7 +36,7 @@ public class CustomerController {
         Customer savedCustomer = customerService.saveNewCustomer(customer);
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.LOCATION, "/api/v1/customer/" + savedCustomer.getId());
-        return new ResponseEntity(savedCustomer, headers, HttpStatus.CREATED);
+        return new ResponseEntity(headers, HttpStatus.CREATED);
 
     }
 
