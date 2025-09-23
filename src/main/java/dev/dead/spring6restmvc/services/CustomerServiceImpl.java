@@ -82,4 +82,11 @@ public class CustomerServiceImpl implements CustomerService {
         // redundant
 //        return customers.replace(customerId, existing);
     }
+
+    @Override
+    public void deleteCustomerById(UUID customerId) {
+        log.debug("Delete customer by id - Service {}", customerId);
+        customers.remove(customerId);
+
+    }
 }

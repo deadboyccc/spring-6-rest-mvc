@@ -19,6 +19,13 @@ import java.util.UUID;
 public class CustomerController {
     private final CustomerService customerService;
 
+    @DeleteMapping("{customerId}")
+    public ResponseEntity deleteCustomer(@PathVariable("customerId") UUID customerId) {
+        log.debug("Delete customer by id - Controller {}", customerId);
+        customerService.deleteCustomerById(customerId);
+        return ResponseEntity.noContent().build();
+    }
+
     @PutMapping("{customerId}")
     public ResponseEntity<Customer> updateBeer(@PathVariable("customerId") UUID customerId, @RequestBody Customer customer) {
         customerService.updateCustomerById(customerId, customer);
