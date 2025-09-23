@@ -18,6 +18,18 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class CustomerController {
     private final CustomerService customerService;
+
+    @PutMapping("{customerId}")
+    public ResponseEntity<Customer> updateBeer(@PathVariable("customerId") UUID customerId, @RequestBody Customer customer) {
+        customerService.updateCustomerById(customerId, customer);
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.add
+                ("Location", "/api/v1/customer/" + customerId.toString());
+        return ResponseEntity
+                .noContent()
+                .headers(responseHeaders)
+                .build();
+    }
     @GetMapping
     public List<Customer> getCustomers() {
         log.debug("Get customers - Controller");
