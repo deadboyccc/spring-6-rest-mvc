@@ -95,6 +95,7 @@ public class BeerServiceImpl implements BeerService {
         existingBeer.setPrice(beer.getPrice());
         existingBeer.setVersion(existingBeer.getVersion() + 1);
         existingBeer.setUpdatedAt(LocalDateTime.now());
+        return existingBeer;
         // redundant
 //        return beers.replace(beerId, existingBeer);
 

@@ -78,6 +78,8 @@ public class CustomerServiceImpl implements CustomerService {
         existing.setCustomerName(customer.getCustomerName());
         existing.setUpdatedAt(LocalDateTime.now());
         existing.setVersion(existing.getVersion() + 1);
-        return customers.replace(customerId, existing);
+        return existing;
+        // redundant
+//        return customers.replace(customerId, existing);
     }
 }
