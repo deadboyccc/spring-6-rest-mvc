@@ -7,6 +7,7 @@ import dev.dead.spring6restmvc.models.BeerStyle;
 import dev.dead.spring6restmvc.services.BeerService;
 import dev.dead.spring6restmvc.services.BeerServiceImpl;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,7 +41,7 @@ class BeerControllerTest {
     BeerService beerService;
     final String basePath = "/api/v1/beer";
 
-    BeerServiceImpl beerServiceImpl;
+    @Nullable BeerServiceImpl beerServiceImpl;
     @Autowired
     ObjectMapper objectMapper;
 
