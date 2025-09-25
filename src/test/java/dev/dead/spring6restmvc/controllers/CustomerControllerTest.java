@@ -7,6 +7,7 @@ import dev.dead.spring6restmvc.services.CustomerServiceImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
@@ -15,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -43,6 +45,21 @@ class CustomerControllerTest {
     @AfterEach
     void tearDown() {
         customerServiceImpl = null;
+    }
+
+    @Test
+    void testDeleteCustomerById() throws Exception {
+        //when
+        UUID customerId = customerServiceImpl.getCustomers().get(0).getId();
+        //then
+        mockMvc.perform(delete(basePath + "/{customerId}", customerId.toString())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent()
+                );
+        ArgumentCaptor<UUID> customerCaptor = ArgumentCaptor.forClass(UUID.class);
+        verify(customerService).deleteCustomerById(customerCaptor.capture());
+
+        assertEquals(customerId.toString(), customerCaptor.getValue().toString());
     }
 
     @Test

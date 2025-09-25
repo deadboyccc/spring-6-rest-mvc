@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
@@ -21,7 +22,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
@@ -78,6 +79,23 @@ class BeerControllerTest {
                 .andExpect(header().exists("Location"))
                 .andExpect(header().string("Location", basePath + "/" + beerId.toString()));
         verify(beerService).updateBeer(any(UUID.class), any(Beer.class));
+    }
+
+    @Test
+    void testDeleteBeerById() throws Exception {
+        //when 
+        UUID beerId = beerServiceImpl.getBeers().get(0).getId();
+
+
+        //then
+        mockMvc.perform(delete(basePath + "/" + beerId)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+        ArgumentCaptor<UUID> beerCaptor = ArgumentCaptor.forClass(UUID.class);
+        verify(beerService).deleteBeerById(beerCaptor.capture());
+        assertEquals(beerId.toString(), beerCaptor.getValue().toString());
+
+
     }
     @Test
     void testCreateNewBeer() throws Exception {
