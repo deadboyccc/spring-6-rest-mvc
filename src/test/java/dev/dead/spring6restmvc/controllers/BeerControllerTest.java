@@ -24,8 +24,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
@@ -53,6 +52,31 @@ class BeerControllerTest {
         beerServiceImpl = null;
     }
 
+    @Test
+    void testUpdateBeerById() throws Exception {
+        // Given
+        UUID beerId = beerServiceImpl.getBeers().get(0).getId();
+        Beer beer = Beer.builder()
+                .beerName("NEW BEER TEST")
+                .beerStyle(BeerStyle.PALE_ALE)
+                .upc("123456")
+                .price(new BigDecimal("10.99"))
+                .quantityOnHand(24)
+                .build();
+
+        // When
+        given(beerService.updateBeer(any(UUID.class), any(Beer.class)))
+                .willReturn(beer);
+
+        // Then
+        mockMvc.perform(put(basePath + "/" + beerId)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(beer)))
+                .andExpect(status().isNoContent())
+                .andExpect(header().exists("Location"))
+                .andExpect(header().string("Location", basePath + "/" + beerId.toString()));
+    }
     @Test
     void testCreateNewBeer() throws Exception {
         // mimicking dto
@@ -93,6 +117,7 @@ class BeerControllerTest {
         String jsonString = objectMapper.writeValueAsString(beer);
         assertEquals(beer, objectMapper.readValue(jsonString, Beer.class));
     }
+
     @Test
     void getBeerByIdTest() throws Exception {
         Beer beer = beerServiceImpl.getBeers().get(0);
