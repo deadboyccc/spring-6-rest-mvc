@@ -11,13 +11,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.UUID;
-
-import static org.mockito.BDDMockito.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
 @Slf4j
@@ -34,15 +30,17 @@ class BeerControllerTest {
     @Test
     void getBeerByIdTest() throws Exception {
         Beer beer = beerServiceImpl.getBeers().get(0);
-        given(beerService.getBeerById(any(UUID.class))).willReturn(beer);
+        given(beerService.getBeerById(beer.getId())).willReturn(beer);
 
 
-        final UUID beerId = UUID.randomUUID();
-
-        mockMvc.perform(get(basePath + "/{beerId}", beerId)
+        mockMvc.perform(get(basePath + "/{beerId}", beer.getId())
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(beer.getId().toString()))
+                .andExpect(jsonPath("$.beerName").value(beer.getBeerName()))
+                .andExpect(jsonPath("$.beerStyle").value(beer.getBeerStyle().toString()))
+                .andExpect(jsonPath("$.price").value(beer.getPrice()));
     }
 
 
