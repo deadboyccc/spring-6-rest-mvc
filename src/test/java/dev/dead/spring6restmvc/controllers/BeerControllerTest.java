@@ -11,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.hamcrest.Matchers.is;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -41,6 +42,16 @@ class BeerControllerTest {
                 .andExpect(jsonPath("$.beerName").value(beer.getBeerName()))
                 .andExpect(jsonPath("$.beerStyle").value(beer.getBeerStyle().toString()))
                 .andExpect(jsonPath("$.price").value(beer.getPrice()));
+    }
+
+    @Test
+    void getBeersTest() throws Exception {
+        given(beerService.getBeers()).willReturn(beerServiceImpl.getBeers());
+        mockMvc.perform(get(basePath).accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.length()", is(beerServiceImpl.getBeers().size())));
+
+
     }
 
 
