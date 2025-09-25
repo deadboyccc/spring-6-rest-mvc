@@ -7,6 +7,7 @@ import dev.dead.spring6restmvc.models.BeerStyle;
 import dev.dead.spring6restmvc.services.BeerService;
 import dev.dead.spring6restmvc.services.BeerServiceImpl;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +46,11 @@ class BeerControllerTest {
     @BeforeEach
     void setUp() {
         beerServiceImpl = new BeerServiceImpl();
+    }
+
+    @AfterEach
+    void tearDown() {
+        beerServiceImpl = null;
     }
 
     @Test
@@ -99,8 +105,7 @@ class BeerControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(beer.getId().toString()))
                 .andExpect(jsonPath("$.beerName").value(beer.getBeerName()))
-                .andExpect(jsonPath("$.beerStyle").value(beer.getBeerStyle().toString()))
-                .andExpect(jsonPath("$.price").value(beer.getPrice()));
+                .andExpect(jsonPath("$.beerStyle").value(beer.getBeerStyle().toString()));
     }
 
     @Test

@@ -42,7 +42,7 @@ class CustomerControllerTest {
 
     @AfterEach
     void tearDown() {
-        customerServiceImpl.getCustomers().clear();
+        customerServiceImpl = null;
     }
 
     @Test
