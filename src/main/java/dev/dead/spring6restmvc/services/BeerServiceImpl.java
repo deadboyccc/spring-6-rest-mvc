@@ -13,14 +13,15 @@ import java.util.*;
 @Service
 @Slf4j
 public class BeerServiceImpl implements BeerService {
-    private Map<UUID, Beer> beers = new HashMap<>();
+    private final Map<UUID, Beer> beers = new HashMap<>();
 
     public BeerServiceImpl() {
         Beer beer1 = Beer.builder()
                 .id(UUID.randomUUID())
                 .beerName("Galaxy Cat")
                 .beerStyle(BeerStyle.PALE_ALE)
-                .upc(UUID.randomUUID().toString())
+                .upc(UUID.randomUUID()
+                        .toString())
                 .quantityOnHand(3)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
@@ -32,7 +33,8 @@ public class BeerServiceImpl implements BeerService {
                 .id(UUID.randomUUID())
                 .beerName("Mango Bobs")
                 .beerStyle(BeerStyle.IPA)
-                .upc(UUID.randomUUID().toString())
+                .upc(UUID.randomUUID()
+                        .toString())
                 .quantityOnHand(5)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
@@ -44,7 +46,8 @@ public class BeerServiceImpl implements BeerService {
                 .id(UUID.randomUUID())
                 .beerName("Pinball Porter")
                 .beerStyle(BeerStyle.PORTER)
-                .upc(UUID.randomUUID().toString())
+                .upc(UUID.randomUUID()
+                        .toString())
                 .quantityOnHand(7)
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())

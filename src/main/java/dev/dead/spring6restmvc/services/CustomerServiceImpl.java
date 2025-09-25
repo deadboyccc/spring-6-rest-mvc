@@ -11,7 +11,7 @@ import java.util.*;
 @Service
 @Slf4j
 public class CustomerServiceImpl implements CustomerService {
-    private Map<UUID, Customer> customers = new HashMap<>();
+    private final Map<UUID, Customer> customers = new HashMap<>();
 
     public CustomerServiceImpl() {
         Customer customer1 = Customer.builder()
