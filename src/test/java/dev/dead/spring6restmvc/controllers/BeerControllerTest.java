@@ -7,6 +7,7 @@ import dev.dead.spring6restmvc.models.BeerStyle;
 import dev.dead.spring6restmvc.services.BeerService;
 import dev.dead.spring6restmvc.services.BeerServiceImpl;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -37,12 +38,18 @@ class BeerControllerTest {
     BeerService beerService;
     final String basePath = "/api/v1/beer";
 
-    BeerServiceImpl beerServiceImpl = new BeerServiceImpl();
+    BeerServiceImpl beerServiceImpl;
     @Autowired
     ObjectMapper objectMapper;
 
+    @BeforeEach
+    void setUp() {
+        beerServiceImpl = new BeerServiceImpl();
+    }
+
     @Test
     void testCreateNewBeer() throws Exception {
+        // mimicking dto
         Beer beer = Beer.builder()
                 .beerName("NEW BEER TEST")
                 .beerStyle(BeerStyle.PALE_ALE)
@@ -63,7 +70,8 @@ class BeerControllerTest {
                 .updatedAt(LocalDateTime.now())
                 .build();
 
-        given(beerService.saveNewBeer(any(Beer.class))).willReturn(savedBeer);
+        given(beerService.saveNewBeer(any(Beer.class)))
+                .willReturn(savedBeer);
 
         mockMvc.perform(post(basePath)
                         .content(objectMapper.writeValueAsString(beer))
