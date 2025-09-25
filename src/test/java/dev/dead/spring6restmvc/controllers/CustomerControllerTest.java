@@ -27,13 +27,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class CustomerControllerTest {
 
     private final String basePath = "/api/v1/customer";
-    CustomerServiceImpl customerServiceImpl;
     @MockitoBean
     CustomerService customerService;
     @Autowired
     private MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper;
+    CustomerServiceImpl customerServiceImpl;
 
     @BeforeEach
     void setUp() {
