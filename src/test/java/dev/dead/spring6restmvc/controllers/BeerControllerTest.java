@@ -1,30 +1,49 @@
 package dev.dead.spring6restmvc.controllers;
 
-import dev.dead.spring6restmvc.models.Beer;
+import dev.dead.spring6restmvc.services.BeerService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 
 @Slf4j
-@SpringBootTest
+@WebMvcTest(BeerController.class)
 class BeerControllerTest {
+
+    final String basePath = "/api/v1/beer";
     @Autowired
-     BeerController controller;
-
-
-
+    MockMvc mockMvc;
+    @MockitoBean
+    BeerService beerService;
 
     @Test
-    void getBeerById() {
-        UUID id = UUID.randomUUID();
-        Beer beer = controller.getBeerById(id);
-        log.debug("get Beer By Id in Test. id: {}", id);
-        log.debug("get Beer By Id in Test. beer: {}", beer);
-        assertNotNull(beer);
+    void getBeerByIdTest() throws Exception {
+        final UUID beerId = UUID.randomUUID();
+
+        mockMvc.perform(get(basePath + "/{beerId}", beerId)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
     }
+
+
+//@SpringBootTest
+//    @Autowired
+//     BeerController controller;
+//    @Test
+//    void OldgetBeerById() {
+//        UUID id = UUID.randomUUID();
+//        Beer beer = controller.getBeerById(id);
+//        log.debug("get Beer By Id in Test. id: {}", id);
+//        log.debug("get Beer By Id in Test. beer: {}", beer);
+//        assertNotNull(beer);
+//    }
 }
