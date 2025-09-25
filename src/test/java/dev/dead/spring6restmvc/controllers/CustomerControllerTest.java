@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.dead.spring6restmvc.models.Customer;
 import dev.dead.spring6restmvc.services.CustomerService;
 import dev.dead.spring6restmvc.services.CustomerServiceImpl;
+import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,7 +36,7 @@ class CustomerControllerTest {
     private MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper;
-    CustomerServiceImpl customerServiceImpl;
+    @Nullable CustomerServiceImpl customerServiceImpl;
 
     @BeforeEach
     void setUp() {

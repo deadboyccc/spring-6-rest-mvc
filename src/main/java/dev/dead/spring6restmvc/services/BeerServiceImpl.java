@@ -3,6 +3,7 @@ package dev.dead.spring6restmvc.services;
 import dev.dead.spring6restmvc.models.Beer;
 import dev.dead.spring6restmvc.models.BeerStyle;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -63,14 +64,14 @@ public class BeerServiceImpl implements BeerService {
     }
 
     @Override
-    public List<Beer> getBeers() {
+    public @NotNull List<Beer> getBeers() {
         log.debug("getBeers() - Service");
         return new ArrayList<>(beers.values());
 
     }
 
     @Override
-    public Beer saveNewBeer(Beer beer) {
+    public @NotNull Beer saveNewBeer(@NotNull Beer beer) {
         log.debug("Save Beer - Service : {}", beer.getBeerName());
         Beer savedBeer = Beer.builder()
                 .id(UUID.randomUUID())
@@ -89,7 +90,7 @@ public class BeerServiceImpl implements BeerService {
     }
 
     @Override
-    public Beer updateBeer(UUID beerId, Beer beer) {
+    public @NotNull Beer updateBeer(UUID beerId, @NotNull Beer beer) {
         log.debug("Update Beer - Service id: {}", beer.getId());
         Beer existingBeer = beers.get(beerId);
         existingBeer.setBeerName(beer.getBeerName());
@@ -114,7 +115,7 @@ public class BeerServiceImpl implements BeerService {
     }
 
     @Override
-    public void patchBeerById(UUID beerId, Beer beer) {
+    public void patchBeerById(UUID beerId, @NotNull Beer beer) {
         log.debug("Patch Beer - Service id: {}", beerId);
         Beer existingBeer = beers.get(beerId);
         if (StringUtils.hasText(beer.getBeerName())) {
@@ -141,8 +142,8 @@ public class BeerServiceImpl implements BeerService {
 
 
     @Override
-    public Beer getBeerById(UUID id) {
-        log.debug("Get Beer by Id - in service. Id: {}", id.toString());
+    public Beer getBeerById(@NotNull UUID id) {
+        log.debug("Get Beer by Id - in service. Id: {}", id);
         return beers.get(id);
     }
 

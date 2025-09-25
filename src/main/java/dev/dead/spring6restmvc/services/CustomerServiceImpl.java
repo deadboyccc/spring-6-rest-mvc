@@ -2,6 +2,7 @@ package dev.dead.spring6restmvc.services;
 
 import dev.dead.spring6restmvc.models.Customer;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -53,13 +54,13 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public List<Customer> getCustomers() {
+    public @NotNull List<Customer> getCustomers() {
         log.debug("Get customers - Service");
         return new ArrayList<>(customers.values());
     }
 
     @Override
-    public Customer saveNewCustomer(Customer customer) {
+    public @NotNull Customer saveNewCustomer(@NotNull Customer customer) {
         Customer savedCustomer = Customer.builder()
                 .id(UUID.randomUUID())
                 .version(1)
@@ -74,7 +75,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Customer updateCustomerById(UUID customerId, Customer customer) {
+    public @NotNull Customer updateCustomerById(UUID customerId, @NotNull Customer customer) {
         Customer existing = customers.get(customerId);
         existing.setCustomerName(customer.getCustomerName());
         existing.setUpdatedAt(LocalDateTime.now());
@@ -94,7 +95,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public void patchCustomer(UUID customerId, Customer customer) {
+    public void patchCustomer(UUID customerId, @NotNull Customer customer) {
         log.debug("Patching customer by id - Service {}", customerId);
         var existing = customers.get(customerId);
 
