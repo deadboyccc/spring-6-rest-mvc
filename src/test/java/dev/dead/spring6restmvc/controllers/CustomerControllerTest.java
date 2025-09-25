@@ -18,6 +18,7 @@ import java.util.UUID;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -61,8 +62,9 @@ class CustomerControllerTest {
                 .andExpect(status().isNoContent())
                 .andExpect(header().exists("Location"))
                 .andExpect(header().string("Location", basePath + "/" + customerId.toString()));
-    }
+        verify(customerService).updateCustomerById(any(UUID.class), any(Customer.class));
 
+    }
     @Test
     void createNewCustomer() throws Exception {
         Customer customerPostDto = Customer.builder()

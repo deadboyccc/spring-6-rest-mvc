@@ -24,6 +24,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -76,6 +77,7 @@ class BeerControllerTest {
                 .andExpect(status().isNoContent())
                 .andExpect(header().exists("Location"))
                 .andExpect(header().string("Location", basePath + "/" + beerId.toString()));
+        verify(beerService).updateBeer(any(UUID.class), any(Beer.class));
     }
     @Test
     void testCreateNewBeer() throws Exception {
