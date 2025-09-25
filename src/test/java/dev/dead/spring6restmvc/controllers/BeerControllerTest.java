@@ -1,6 +1,8 @@
 package dev.dead.spring6restmvc.controllers;
 
+import dev.dead.spring6restmvc.models.Beer;
 import dev.dead.spring6restmvc.services.BeerService;
+import dev.dead.spring6restmvc.services.BeerServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +13,10 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.UUID;
 
+import static org.mockito.BDDMockito.any;
+import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -25,13 +30,21 @@ class BeerControllerTest {
     @MockitoBean
     BeerService beerService;
 
+
+    BeerServiceImpl beerServiceImpl = new BeerServiceImpl();
     @Test
     void getBeerByIdTest() throws Exception {
+        Beer beer = beerServiceImpl.getBeers().get(0);
+        given(beerService.getBeerById(any(UUID.class))).willReturn(beer);
+
+
+
         final UUID beerId = UUID.randomUUID();
 
         mockMvc.perform(get(basePath + "/{beerId}", beerId)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
 
 
