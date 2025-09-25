@@ -24,19 +24,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(BeerController.class)
 class BeerControllerTest {
 
-    final String basePath = "/api/v1/beer";
     @Autowired
     MockMvc mockMvc;
     @MockitoBean
     BeerService beerService;
-
+    final String basePath = "/api/v1/beer";
 
     BeerServiceImpl beerServiceImpl = new BeerServiceImpl();
     @Test
     void getBeerByIdTest() throws Exception {
         Beer beer = beerServiceImpl.getBeers().get(0);
         given(beerService.getBeerById(any(UUID.class))).willReturn(beer);
-
 
 
         final UUID beerId = UUID.randomUUID();
