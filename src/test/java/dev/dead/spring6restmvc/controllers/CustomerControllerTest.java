@@ -18,8 +18,7 @@ import java.util.UUID;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
@@ -43,6 +42,25 @@ class CustomerControllerTest {
     @AfterEach
     void tearDown() {
         customerServiceImpl = null;
+    }
+
+    @Test
+    void testUpdateCustomer() throws Exception {
+        // when
+        UUID customerId = customerServiceImpl.getCustomers().get(0).getId();
+        Customer customer = customerServiceImpl.getCustomers().get(0);
+        // given
+        given(customerService.updateCustomerById(any(UUID.class), any(Customer.class)))
+                .willReturn(null);
+
+        // then
+        mockMvc.perform(put(basePath + "/" + customerId)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(customer)))
+                .andExpect(status().isNoContent())
+                .andExpect(header().exists("Location"))
+                .andExpect(header().string("Location", basePath + "/" + customerId.toString()));
     }
 
     @Test
