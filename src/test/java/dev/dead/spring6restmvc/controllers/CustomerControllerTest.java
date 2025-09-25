@@ -63,7 +63,9 @@ class CustomerControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(header().exists("Location"))
                 .andExpect(header().string("Location",
-                        basePath + "/" + (returnedCustomerEntity.getId().toString())));
+                        basePath
+                                + "/"
+                                + (returnedCustomerEntity.getId().toString())));
     }
 
     @Test
