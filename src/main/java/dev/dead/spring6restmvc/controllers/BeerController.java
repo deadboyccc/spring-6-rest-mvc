@@ -24,13 +24,16 @@ public class BeerController {
     public @NotNull ResponseEntity<Beer> patchBeer(@PathVariable("beerId") UUID beerId, @RequestBody Beer beer) {
         log.info("Patching beer with id - Controller: {}", beerId);
         beerService.patchBeerById(beerId, beer);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.noContent()
+                .build();
     }
+
     @DeleteMapping("{beerId}")
     public @NotNull ResponseEntity deleteBeer(@PathVariable("beerId") UUID beerId) {
         log.debug("Delete Beer - Controller id: {}", beerId);
         beerService.deleteBeerById(beerId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.noContent()
+                .build();
     }
 
     @SuppressWarnings("rawtypes")
@@ -46,12 +49,13 @@ public class BeerController {
                 .headers(responseHeaders)
                 .build();
     }
+
     @SuppressWarnings({"unchecked", "rawtypes"})
     @PostMapping
     public @NotNull ResponseEntity addBeer(@RequestBody @NotNull Beer beer) {
         log.debug("Add Beer - Controller: {}", beer.getBeerName());
         Beer savedBeer = beerService.saveNewBeer(beer);
-        HttpHeaders  headers = new HttpHeaders();
+        HttpHeaders headers = new HttpHeaders();
         headers.add("Location", "/api/v1/beer/" + savedBeer.getId());
         return new ResponseEntity(headers, HttpStatus.CREATED);
     }

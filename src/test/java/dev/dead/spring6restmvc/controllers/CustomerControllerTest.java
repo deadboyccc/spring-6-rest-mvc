@@ -9,6 +9,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
@@ -32,11 +33,13 @@ class CustomerControllerTest {
     private final String basePath = "/api/v1/customer";
     @MockitoBean
     CustomerService customerService;
+    @Nullable CustomerServiceImpl customerServiceImpl;
+    @Captor
+    ArgumentCaptor<UUID> captor;
     @Autowired
     private MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper;
-    @Nullable CustomerServiceImpl customerServiceImpl;
 
     @BeforeEach
     void setUp() {
@@ -51,23 +54,28 @@ class CustomerControllerTest {
     @Test
     void testDeleteCustomerById() throws Exception {
         //when
-        UUID customerId = customerServiceImpl.getCustomers().get(0).getId();
+        UUID customerId = customerServiceImpl.getCustomers()
+                .get(0)
+                .getId();
         //then
         mockMvc.perform(delete(basePath + "/{customerId}", customerId.toString())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent()
                 );
-        ArgumentCaptor<UUID> customerCaptor = ArgumentCaptor.forClass(UUID.class);
-        verify(customerService).deleteCustomerById(customerCaptor.capture());
+        verify(customerService).deleteCustomerById(captor.capture());
 
-        assertEquals(customerId.toString(), customerCaptor.getValue().toString());
+        assertEquals(customerId.toString(), captor.getValue()
+                .toString());
     }
 
     @Test
     void testUpdateCustomer() throws Exception {
         // when
-        UUID customerId = customerServiceImpl.getCustomers().get(0).getId();
-        Customer customer = customerServiceImpl.getCustomers().get(0);
+        UUID customerId = customerServiceImpl.getCustomers()
+                .get(0)
+                .getId();
+        Customer customer = customerServiceImpl.getCustomers()
+                .get(0);
         // given
         given(customerService.updateCustomerById(any(UUID.class), any(Customer.class)))
                 .willReturn(null);
@@ -80,9 +88,12 @@ class CustomerControllerTest {
                 .andExpect(status().isNoContent())
                 .andExpect(header().exists("Location"))
                 .andExpect(header().string("Location", basePath + "/" + customerId.toString()));
-        verify(customerService).updateCustomerById(any(UUID.class), any(Customer.class));
+        verify(customerService).updateCustomerById(captor.capture(), any(Customer.class));
 
+        assertEquals(customerId.toString(), captor.getValue()
+                .toString());
     }
+
     @Test
     void createNewCustomer() throws Exception {
         Customer customerPostDto = Customer.builder()
@@ -103,7 +114,8 @@ class CustomerControllerTest {
                 .andExpect(header().string("Location",
                         basePath
                                 + "/"
-                                + (returnedCustomerEntity.getId().toString())));
+                                + (returnedCustomerEntity.getId()
+                                .toString())));
     }
 
     @Test
@@ -112,17 +124,20 @@ class CustomerControllerTest {
         mockMvc.perform(get(basePath).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.length()", is(customerServiceImpl.getCustomers().size())));
+                .andExpect(jsonPath("$.length()", is(customerServiceImpl.getCustomers()
+                        .size())));
     }
 
     @Test
     void getCustomer() throws Exception {
-        Customer customer = customerServiceImpl.getCustomers().get(0);
+        Customer customer = customerServiceImpl.getCustomers()
+                .get(0);
         given(customerService.getCustomerById(customer.getId())).willReturn(customer);
         mockMvc.perform(get(basePath + "/{customerId}", customer.getId()).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id").value(customer.getId().toString()))
+                .andExpect(jsonPath("$.id").value(customer.getId()
+                        .toString()))
                 .andExpect(jsonPath("$.customerName").value(customer.getCustomerName()));
     }
 }

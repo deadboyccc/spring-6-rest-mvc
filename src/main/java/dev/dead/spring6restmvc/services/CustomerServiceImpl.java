@@ -39,7 +39,6 @@ public class CustomerServiceImpl implements CustomerService {
                 .build();
 
 
-
         customers.put(customer1.getId(), customer1);
         customers.put(customer2.getId(), customer2);
         customers.put(customer3.getId(), customer3);

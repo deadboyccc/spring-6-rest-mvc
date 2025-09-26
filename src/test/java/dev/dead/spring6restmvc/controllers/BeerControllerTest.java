@@ -35,12 +35,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(BeerController.class)
 class BeerControllerTest {
 
+    final String basePath = "/api/v1/beer";
     @Autowired
     MockMvc mockMvc;
     @MockitoBean
     BeerService beerService;
-    final String basePath = "/api/v1/beer";
-
     @Nullable BeerServiceImpl beerServiceImpl;
     @Autowired
     ObjectMapper objectMapper;
@@ -58,7 +57,9 @@ class BeerControllerTest {
     @Test
     void testUpdateBeerById() throws Exception {
         // Given
-        UUID beerId = beerServiceImpl.getBeers().get(0).getId();
+        UUID beerId = beerServiceImpl.getBeers()
+                .get(0)
+                .getId();
         Beer beer = Beer.builder()
                 .beerName("NEW BEER TEST")
                 .beerStyle(BeerStyle.PALE_ALE)
@@ -85,7 +86,9 @@ class BeerControllerTest {
     @Test
     void testDeleteBeerById() throws Exception {
         //when 
-        UUID beerId = beerServiceImpl.getBeers().get(0).getId();
+        UUID beerId = beerServiceImpl.getBeers()
+                .get(0)
+                .getId();
 
 
         //then
@@ -94,10 +97,12 @@ class BeerControllerTest {
                 .andExpect(status().isNoContent());
         ArgumentCaptor<UUID> beerCaptor = ArgumentCaptor.forClass(UUID.class);
         verify(beerService).deleteBeerById(beerCaptor.capture());
-        assertEquals(beerId.toString(), beerCaptor.getValue().toString());
+        assertEquals(beerId.toString(), beerCaptor.getValue()
+                .toString());
 
 
     }
+
     @Test
     void testCreateNewBeer() throws Exception {
         // mimicking dto
@@ -130,18 +135,21 @@ class BeerControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(header().exists("Location"))
-                .andExpect(header().string("Location", "/api/v1/beer/" + savedBeer.getId().toString()));
+                .andExpect(header().string("Location", "/api/v1/beer/" + savedBeer.getId()
+                        .toString()));
     }
 
     void testJacksonConfig() throws JsonProcessingException {
-        Beer beer = beerServiceImpl.getBeers().get(0);
+        Beer beer = beerServiceImpl.getBeers()
+                .get(0);
         String jsonString = objectMapper.writeValueAsString(beer);
         assertEquals(beer, objectMapper.readValue(jsonString, Beer.class));
     }
 
     @Test
     void getBeerByIdTest() throws Exception {
-        Beer beer = beerServiceImpl.getBeers().get(0);
+        Beer beer = beerServiceImpl.getBeers()
+                .get(0);
         given(beerService.getBeerById(beer.getId())).willReturn(beer);
 
 
@@ -149,17 +157,21 @@ class BeerControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id").value(beer.getId().toString()))
+                .andExpect(jsonPath("$.id").value(beer.getId()
+                        .toString()))
                 .andExpect(jsonPath("$.beerName").value(beer.getBeerName()))
-                .andExpect(jsonPath("$.beerStyle").value(beer.getBeerStyle().toString()));
+                .andExpect(jsonPath("$.beerStyle").value(beer.getBeerStyle()
+                        .toString()));
     }
 
     @Test
     void getBeersTest() throws Exception {
         given(beerService.getBeers()).willReturn(beerServiceImpl.getBeers());
-        mockMvc.perform(get(basePath).accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
+        mockMvc.perform(get(basePath).accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.length()", is(beerServiceImpl.getBeers().size())));
+                .andExpect(jsonPath("$.length()", is(beerServiceImpl.getBeers()
+                        .size())));
 
 
     }

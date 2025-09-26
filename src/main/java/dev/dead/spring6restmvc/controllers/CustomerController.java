@@ -21,20 +21,25 @@ public class CustomerController {
     private final @NotNull CustomerService customerService;
 
     @PatchMapping("{customerId}")
-    public @NotNull ResponseEntity<Customer> patchCustomer(@PathVariable("customerId") UUID customerId, @RequestBody Customer customer) {
+    public @NotNull ResponseEntity<Customer> patchCustomer(@PathVariable("customerId") UUID customerId,
+                                                           @RequestBody Customer customer) {
         log.debug("Patching customer with id - Controller {}", customerId);
         customerService.patchCustomer(customerId, customer);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.noContent()
+                .build();
     }
+
     @DeleteMapping("{customerId}")
     public @NotNull ResponseEntity deleteCustomer(@PathVariable("customerId") UUID customerId) {
         log.debug("Delete customer by id - Controller {}", customerId);
         customerService.deleteCustomerById(customerId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.noContent()
+                .build();
     }
 
     @PutMapping("{customerId}")
-    public @NotNull ResponseEntity<Customer> updateBeer(@PathVariable("customerId") @NotNull UUID customerId, @RequestBody Customer customer) {
+    public @NotNull ResponseEntity<Customer> updateBeer(@PathVariable("customerId") @NotNull UUID customerId,
+                                                        @RequestBody Customer customer) {
         customerService.updateCustomerById(customerId, customer);
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.add
@@ -44,6 +49,7 @@ public class CustomerController {
                 .headers(responseHeaders)
                 .build();
     }
+
     @GetMapping
     public List<Customer> getCustomers() {
         log.debug("Get customers - Controller");
