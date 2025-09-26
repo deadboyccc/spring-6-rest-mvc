@@ -30,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(CustomerController.class)
 class CustomerControllerTest {
 
-    private final String basePath = "/api/v1/customer";
+
     @MockitoBean
     CustomerService customerService;
     @Nullable CustomerServiceImpl customerServiceImpl;
@@ -68,7 +68,7 @@ class CustomerControllerTest {
                 .build();
 
         // then
-        mockMvc.perform(patch(basePath + "/" + customerId).accept(MediaType.APPLICATION_JSON)
+        mockMvc.perform(patch(CustomerController.CUSTOMER_BASE_URL + "/" + customerId).accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(customer)
                         ))
@@ -88,7 +88,7 @@ class CustomerControllerTest {
                 .get(0)
                 .getId();
         //then
-        mockMvc.perform(delete(basePath + "/{customerId}", customerId.toString())
+        mockMvc.perform(delete(CustomerController.CUSTOMER_BASE_URL + "/{customerId}", customerId.toString())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent()
                 );
@@ -112,13 +112,13 @@ class CustomerControllerTest {
                 .willReturn(null);
 
         // then
-        mockMvc.perform(put(basePath + "/" + customerId)
+        mockMvc.perform(put(CustomerController.CUSTOMER_BASE_URL + "/" + customerId)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(customer)))
                 .andExpect(status().isNoContent())
                 .andExpect(header().exists("Location"))
-                .andExpect(header().string("Location", basePath + "/" + customerId.toString()));
+                .andExpect(header().string("Location", CustomerController.CUSTOMER_BASE_URL + "/" + customerId.toString()));
         verify(customerService).updateCustomerById(uuidArgumentCaptor.capture(), any(Customer.class));
 
         assertEquals(customerId.toString(), uuidArgumentCaptor.getValue()
@@ -136,14 +136,14 @@ class CustomerControllerTest {
                 .build();
         given(customerService.saveNewCustomer(any(Customer.class)))
                 .willReturn(returnedCustomerEntity);
-        mockMvc.perform(post(basePath)
+        mockMvc.perform(post(CustomerController.CUSTOMER_BASE_URL)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(customerPostDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(header().exists("Location"))
                 .andExpect(header().string("Location",
-                        basePath
+                        CustomerController.CUSTOMER_BASE_URL
                                 + "/"
                                 + (returnedCustomerEntity.getId()
                                 .toString())));
@@ -153,7 +153,7 @@ class CustomerControllerTest {
     void getCustomers() throws Exception {
         assertNotNull(customerServiceImpl);
         given(customerService.getCustomers()).willReturn(customerServiceImpl.getCustomers());
-        mockMvc.perform(get(basePath).accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get(CustomerController.CUSTOMER_BASE_URL).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.length()", is(customerServiceImpl.getCustomers()
@@ -166,7 +166,7 @@ class CustomerControllerTest {
         Customer customer = customerServiceImpl.getCustomers()
                 .get(0);
         given(customerService.getCustomerById(customer.getId())).willReturn(customer);
-        mockMvc.perform(get(basePath + "/{customerId}", customer.getId()).accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get(CustomerController.CUSTOMER_BASE_URL + "/{customerId}", customer.getId()).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(customer.getId()

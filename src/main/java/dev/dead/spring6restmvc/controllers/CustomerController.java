@@ -14,13 +14,14 @@ import java.util.List;
 import java.util.UUID;
 
 @Slf4j
-@RestController
-@RequestMapping("/api/v1/customer")
 @RequiredArgsConstructor
+@RestController
 public class CustomerController {
+    public static final String CUSTOMER_BASE_URL = "/api/v1/customer";
+    public static final String CUSTOMER_ID_URL = CUSTOMER_BASE_URL + "/{customerId}";
     private final @NotNull CustomerService customerService;
 
-    @PatchMapping("{customerId}")
+    @PatchMapping(CUSTOMER_ID_URL)
     public @NotNull ResponseEntity<Customer> patchCustomer(@PathVariable("customerId") UUID customerId,
                                                            @RequestBody Customer customer) {
         log.debug("Patching customer with id - Controller {}", customerId);
@@ -29,7 +30,7 @@ public class CustomerController {
                 .build();
     }
 
-    @DeleteMapping("{customerId}")
+    @DeleteMapping(CUSTOMER_ID_URL)
     public @NotNull ResponseEntity deleteCustomer(@PathVariable("customerId") UUID customerId) {
         log.debug("Delete customer by id - Controller {}", customerId);
         customerService.deleteCustomerById(customerId);
@@ -37,7 +38,7 @@ public class CustomerController {
                 .build();
     }
 
-    @PutMapping("{customerId}")
+    @PutMapping(CUSTOMER_ID_URL)
     public @NotNull ResponseEntity<Customer> updateBeer(@PathVariable("customerId") @NotNull UUID customerId,
                                                         @RequestBody Customer customer) {
         customerService.updateCustomerById(customerId, customer);
@@ -50,20 +51,20 @@ public class CustomerController {
                 .build();
     }
 
-    @GetMapping
+    @GetMapping(CUSTOMER_BASE_URL)
     public List<Customer> getCustomers() {
         log.debug("Get customers - Controller");
         return customerService.getCustomers();
     }
 
-    @GetMapping("{customerId}")
+    @GetMapping(CUSTOMER_ID_URL)
     public Customer getCustomer(@PathVariable("customerId") UUID customerId) {
         log.debug("Get customer by id - Controller: {}", customerId);
         return customerService.getCustomerById(customerId);
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    @PostMapping
+    @PostMapping(CUSTOMER_BASE_URL)
     public @NotNull ResponseEntity createCustomer(@RequestBody @NotNull Customer customer) {
         log.debug("Create customer - Controller: {}", customer.getCustomerName());
         Customer savedCustomer = customerService.saveNewCustomer(customer);
