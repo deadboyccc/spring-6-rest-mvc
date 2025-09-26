@@ -34,12 +34,14 @@ class CustomerControllerTest {
     @MockitoBean
     CustomerService customerService;
     @Nullable CustomerServiceImpl customerServiceImpl;
-    @Captor
-    ArgumentCaptor<UUID> captor;
     @Autowired
     private MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper;
+    @Captor
+    ArgumentCaptor<UUID> uuidArgumentCaptor;
+    @Captor
+    ArgumentCaptor<Customer> customerArgumentCaptor;
 
     @BeforeEach
     void setUp() {
@@ -53,6 +55,32 @@ class CustomerControllerTest {
 
 
     @Test
+    void testPatchCustomerById() throws Exception {
+        // when
+        assertNotNull(customerServiceImpl);
+        UUID customerId = customerServiceImpl.getCustomers()
+                .get(0)
+                .getId();
+        assertNotNull(customerId);
+        // -- customer dto --
+        Customer customer = Customer.builder()
+                .customerName("NEW TEST NAME")
+                .build();
+
+        // then
+        mockMvc.perform(patch(basePath + "/" + customerId).accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(customer)
+                        ))
+                .andExpect(status().isNoContent());
+        verify(customerService).patchCustomer(uuidArgumentCaptor.capture(), customerArgumentCaptor.capture());
+        assertEquals(uuidArgumentCaptor.getValue(), customerId);
+        assertEquals(customerArgumentCaptor.getValue()
+                .getCustomerName(), customer.getCustomerName());
+
+    }
+
+    @Test
     void testDeleteCustomerById() throws Exception {
         //when
         UUID customerId = customerServiceImpl.getCustomers()
@@ -63,9 +91,9 @@ class CustomerControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent()
                 );
-        verify(customerService).deleteCustomerById(captor.capture());
+        verify(customerService).deleteCustomerById(uuidArgumentCaptor.capture());
 
-        assertEquals(customerId.toString(), captor.getValue()
+        assertEquals(customerId.toString(), uuidArgumentCaptor.getValue()
                 .toString());
     }
 
@@ -89,9 +117,9 @@ class CustomerControllerTest {
                 .andExpect(status().isNoContent())
                 .andExpect(header().exists("Location"))
                 .andExpect(header().string("Location", basePath + "/" + customerId.toString()));
-        verify(customerService).updateCustomerById(captor.capture(), any(Customer.class));
+        verify(customerService).updateCustomerById(uuidArgumentCaptor.capture(), any(Customer.class));
 
-        assertEquals(customerId.toString(), captor.getValue()
+        assertEquals(customerId.toString(), uuidArgumentCaptor.getValue()
                 .toString());
     }
 
