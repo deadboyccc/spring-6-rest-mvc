@@ -7,7 +7,6 @@ import dev.dead.spring6restmvc.models.BeerStyle;
 import dev.dead.spring6restmvc.services.BeerService;
 import dev.dead.spring6restmvc.services.BeerServiceImpl;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,7 +36,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(BeerController.class)
 class BeerControllerTest {
 
-    final String basePath = "/api/v1/beer";
     @Autowired
     MockMvc mockMvc;
     @MockitoBean
@@ -75,7 +73,7 @@ class BeerControllerTest {
                 .build();
 
         // When
-        mockMvc.perform(patch(basePath + "/" + beerId)
+        mockMvc.perform(patch(BeerController.BEER_BASE_URL + "/" + beerId)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(beer)))
@@ -108,13 +106,13 @@ class BeerControllerTest {
                 .willReturn(beer);
 
         // Then
-        mockMvc.perform(put(basePath + "/" + beerId)
+        mockMvc.perform(put(BeerController.BEER_BASE_URL + "/" + beerId)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(beer)))
                 .andExpect(status().isNoContent())
                 .andExpect(header().exists("Location"))
-                .andExpect(header().string("Location", basePath + "/" + beerId.toString()));
+                .andExpect(header().string("Location", BeerController.BEER_BASE_URL + "/" + beerId.toString()));
         verify(beerService).updateBeer(any(UUID.class), any(Beer.class));
     }
 
@@ -128,7 +126,7 @@ class BeerControllerTest {
 
 
         //then
-        mockMvc.perform(delete(basePath + "/" + beerId)
+        mockMvc.perform(delete(BeerController.BEER_BASE_URL + "/" + beerId)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
         verify(beerService).deleteBeerById(uuidArgumentCaptor.capture());
@@ -164,7 +162,7 @@ class BeerControllerTest {
         given(beerService.saveNewBeer(any(Beer.class)))
                 .willReturn(savedBeer);
 
-        mockMvc.perform(post(basePath)
+        mockMvc.perform(post(BeerController.BEER_BASE_URL)
                         .content(objectMapper.writeValueAsString(beer))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -190,7 +188,7 @@ class BeerControllerTest {
         given(beerService.getBeerById(beer.getId())).willReturn(beer);
 
 
-        mockMvc.perform(get(basePath + "/{beerId}", beer.getId())
+        mockMvc.perform(get(BeerController.BEER_BASE_URL + "/{beerId}", beer.getId())
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -205,7 +203,7 @@ class BeerControllerTest {
     void getBeersTest() throws Exception {
         assertNotNull(beerServiceImpl);
         given(beerService.getBeers()).willReturn(beerServiceImpl.getBeers());
-        mockMvc.perform(get(basePath).accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get(BeerController.BEER_BASE_URL).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.length()", is(beerServiceImpl.getBeers()

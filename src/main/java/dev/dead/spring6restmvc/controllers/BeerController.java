@@ -16,11 +16,12 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@RequestMapping("/api/v1/beer")
 public class BeerController {
+    public static final String BEER_BASE_URL = "/api/v1/beer";
+    public static final String BEER_ID_URL = BEER_BASE_URL + "/{beerId}";
     private final @NotNull BeerService beerService;
 
-    @PatchMapping("{beerId}")
+    @PatchMapping(BEER_ID_URL)
     public @NotNull ResponseEntity<Beer> patchBeer(@PathVariable("beerId") UUID beerId, @RequestBody Beer beer) {
         log.info("Patching beer with id - Controller: {}", beerId);
         beerService.patchBeerById(beerId, beer);
@@ -28,7 +29,7 @@ public class BeerController {
                 .build();
     }
 
-    @DeleteMapping("{beerId}")
+    @DeleteMapping(BEER_ID_URL)
     public @NotNull ResponseEntity deleteBeer(@PathVariable("beerId") UUID beerId) {
         log.debug("Delete Beer - Controller id: {}", beerId);
         beerService.deleteBeerById(beerId);
@@ -37,7 +38,7 @@ public class BeerController {
     }
 
     @SuppressWarnings("rawtypes")
-    @PutMapping("{beerId}")
+    @PutMapping(BEER_ID_URL)
     public @NotNull ResponseEntity updateBeer(@PathVariable("beerId") UUID beerId, @RequestBody Beer beer) {
         log.debug("updateBeer beerId={} - Controller", beerId);
         beerService.updateBeer(beerId, beer);
@@ -51,7 +52,7 @@ public class BeerController {
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    @PostMapping
+    @PostMapping(BEER_BASE_URL)
     public @NotNull ResponseEntity addBeer(@RequestBody @NotNull Beer beer) {
         log.debug("Add Beer - Controller: {}", beer.getBeerName());
         Beer savedBeer = beerService.saveNewBeer(beer);
@@ -60,13 +61,13 @@ public class BeerController {
         return new ResponseEntity(headers, HttpStatus.CREATED);
     }
 
-    @GetMapping()
+    @GetMapping(BEER_BASE_URL)
     public List<Beer> getBeers() {
         return beerService.getBeers();
     }
 
 
-    @GetMapping("{beerId}")
+    @GetMapping(BEER_ID_URL)
     public Beer getBeerById(@PathVariable("beerId") @NotNull UUID beerId) {
         log.debug("Get Beer by Id - in Controller. Id: {}", beerId);
         return beerService.getBeerById(beerId);
