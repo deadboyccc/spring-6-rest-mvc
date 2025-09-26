@@ -12,6 +12,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
@@ -54,6 +55,9 @@ class BeerControllerTest {
         beerServiceImpl = null;
     }
 
+    @Captor
+    ArgumentCaptor<UUID> captor;
+
     @Test
     void testUpdateBeerById() throws Exception {
         // Given
@@ -95,9 +99,8 @@ class BeerControllerTest {
         mockMvc.perform(delete(basePath + "/" + beerId)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
-        ArgumentCaptor<UUID> beerCaptor = ArgumentCaptor.forClass(UUID.class);
-        verify(beerService).deleteBeerById(beerCaptor.capture());
-        assertEquals(beerId.toString(), beerCaptor.getValue()
+        verify(beerService).deleteBeerById(captor.capture());
+        assertEquals(beerId.toString(), captor.getValue()
                 .toString());
 
 
