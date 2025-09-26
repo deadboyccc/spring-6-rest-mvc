@@ -73,7 +73,7 @@ class BeerControllerTest {
                 .build();
 
         // When
-        mockMvc.perform(patch(BeerController.BEER_BASE_URL + "/" + beerId)
+        mockMvc.perform(patch(BeerController.BEER_ID_URL, beerId)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(beer)))
@@ -106,7 +106,7 @@ class BeerControllerTest {
                 .willReturn(beer);
 
         // Then
-        mockMvc.perform(put(BeerController.BEER_BASE_URL + "/" + beerId)
+        mockMvc.perform(put(BeerController.BEER_ID_URL, beerId)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(beer)))
@@ -126,7 +126,7 @@ class BeerControllerTest {
 
 
         //then
-        mockMvc.perform(delete(BeerController.BEER_BASE_URL + "/" + beerId)
+        mockMvc.perform(delete(BeerController.BEER_ID_URL, beerId)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
         verify(beerService).deleteBeerById(uuidArgumentCaptor.capture());
@@ -188,7 +188,7 @@ class BeerControllerTest {
         given(beerService.getBeerById(beer.getId())).willReturn(beer);
 
 
-        mockMvc.perform(get(BeerController.BEER_BASE_URL + "/{beerId}", beer.getId())
+        mockMvc.perform(get(BeerController.BEER_ID_URL, beer.getId())
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))

@@ -68,7 +68,8 @@ class CustomerControllerTest {
                 .build();
 
         // then
-        mockMvc.perform(patch(CustomerController.CUSTOMER_BASE_URL + "/" + customerId).accept(MediaType.APPLICATION_JSON)
+        mockMvc.perform(patch(CustomerController.CUSTOMER_ID_URL, customerId)
+                        .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(customer)
                         ))
@@ -88,7 +89,7 @@ class CustomerControllerTest {
                 .get(0)
                 .getId();
         //then
-        mockMvc.perform(delete(CustomerController.CUSTOMER_BASE_URL + "/{customerId}", customerId.toString())
+        mockMvc.perform(delete(CustomerController.CUSTOMER_ID_URL, customerId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent()
                 );
@@ -112,7 +113,7 @@ class CustomerControllerTest {
                 .willReturn(null);
 
         // then
-        mockMvc.perform(put(CustomerController.CUSTOMER_BASE_URL + "/" + customerId)
+        mockMvc.perform(put(CustomerController.CUSTOMER_ID_URL, customerId)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(customer)))
@@ -161,12 +162,13 @@ class CustomerControllerTest {
     }
 
     @Test
-    void getCustomer() throws Exception {
+    void getCustomerById() throws Exception {
         assertNotNull(customerServiceImpl);
         Customer customer = customerServiceImpl.getCustomers()
                 .get(0);
         given(customerService.getCustomerById(customer.getId())).willReturn(customer);
-        mockMvc.perform(get(CustomerController.CUSTOMER_BASE_URL + "/{customerId}", customer.getId()).accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get(CustomerController.CUSTOMER_ID_URL, customer.getId())
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(customer.getId()
