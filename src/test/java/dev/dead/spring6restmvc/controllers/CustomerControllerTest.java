@@ -34,14 +34,14 @@ class CustomerControllerTest {
     @MockitoBean
     CustomerService customerService;
     @Nullable CustomerServiceImpl customerServiceImpl;
-    @Autowired
-    private MockMvc mockMvc;
-    @Autowired
-    private ObjectMapper objectMapper;
     @Captor
     ArgumentCaptor<UUID> uuidArgumentCaptor;
     @Captor
     ArgumentCaptor<Customer> customerArgumentCaptor;
+    @Autowired
+    private MockMvc mockMvc;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @BeforeEach
     void setUp() {
