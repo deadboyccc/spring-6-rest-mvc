@@ -91,6 +91,7 @@ class BeerControllerTest {
     @Test
     void testUpdateBeerById() throws Exception {
         // Given
+        assertNotNull(beerServiceImpl);
         UUID beerId = beerServiceImpl.getBeers()
                 .get(0)
                 .getId();
@@ -120,6 +121,7 @@ class BeerControllerTest {
     @Test
     void testDeleteBeerById() throws Exception {
         //when 
+        assertNotNull(beerServiceImpl);
         UUID beerId = beerServiceImpl.getBeers()
                 .get(0)
                 .getId();
@@ -173,6 +175,7 @@ class BeerControllerTest {
     }
 
     void testJacksonConfig() throws JsonProcessingException {
+        assertNotNull(beerServiceImpl);
         Beer beer = beerServiceImpl.getBeers()
                 .get(0);
         String jsonString = objectMapper.writeValueAsString(beer);
@@ -181,6 +184,7 @@ class BeerControllerTest {
 
     @Test
     void getBeerByIdTest() throws Exception {
+        assertNotNull(beerServiceImpl);
         Beer beer = beerServiceImpl.getBeers()
                 .get(0);
         given(beerService.getBeerById(beer.getId())).willReturn(beer);
@@ -199,6 +203,7 @@ class BeerControllerTest {
 
     @Test
     void getBeersTest() throws Exception {
+        assertNotNull(beerServiceImpl);
         given(beerService.getBeers()).willReturn(beerServiceImpl.getBeers());
         mockMvc.perform(get(basePath).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())

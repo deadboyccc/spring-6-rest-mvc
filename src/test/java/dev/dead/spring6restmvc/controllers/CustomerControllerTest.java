@@ -83,6 +83,7 @@ class CustomerControllerTest {
     @Test
     void testDeleteCustomerById() throws Exception {
         //when
+        assertNotNull(customerServiceImpl);
         UUID customerId = customerServiceImpl.getCustomers()
                 .get(0)
                 .getId();
@@ -100,6 +101,7 @@ class CustomerControllerTest {
     @Test
     void testUpdateCustomer() throws Exception {
         // when
+        assertNotNull(customerServiceImpl);
         UUID customerId = customerServiceImpl.getCustomers()
                 .get(0)
                 .getId();
@@ -149,6 +151,7 @@ class CustomerControllerTest {
 
     @Test
     void getCustomers() throws Exception {
+        assertNotNull(customerServiceImpl);
         given(customerService.getCustomers()).willReturn(customerServiceImpl.getCustomers());
         mockMvc.perform(get(basePath).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -159,6 +162,7 @@ class CustomerControllerTest {
 
     @Test
     void getCustomer() throws Exception {
+        assertNotNull(customerServiceImpl);
         Customer customer = customerServiceImpl.getCustomers()
                 .get(0);
         given(customerService.getCustomerById(customer.getId())).willReturn(customer);
