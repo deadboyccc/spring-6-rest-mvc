@@ -7,6 +7,7 @@ import dev.dead.spring6restmvc.models.BeerStyle;
 import dev.dead.spring6restmvc.services.BeerService;
 import dev.dead.spring6restmvc.services.BeerServiceImpl;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,6 +45,10 @@ class BeerControllerTest {
     @Nullable BeerServiceImpl beerServiceImpl;
     @Autowired
     ObjectMapper objectMapper;
+    @Captor
+    ArgumentCaptor<UUID> uuidArgumentCaptor;
+    @Captor
+    ArgumentCaptor<Beer> beerArgumentCaptor;
 
     @BeforeEach
     void setUp() {
@@ -55,8 +60,33 @@ class BeerControllerTest {
         beerServiceImpl = null;
     }
 
-    @Captor
-    ArgumentCaptor<UUID> captor;
+
+    @Test
+    void testPatchBeerById() throws Exception {
+
+        // Given
+        assertNotNull(beerServiceImpl);
+        UUID beerId = beerServiceImpl.getBeers()
+                .get(0)
+                .getId();
+
+        Beer beer = Beer.builder()
+                .beerName("NEW BEER TEST")
+                .build();
+
+        // When
+        mockMvc.perform(patch(basePath + "/" + beerId)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(beer)))
+                .andExpect(status().isNoContent());
+
+        // Then
+        verify(beerService).patchBeerById(uuidArgumentCaptor.capture(), beerArgumentCaptor.capture());
+        assertEquals(beer.getBeerName(), beerArgumentCaptor.getValue()
+                .getBeerName());
+        assertEquals(beerId, uuidArgumentCaptor.getValue());
+    }
 
     @Test
     void testUpdateBeerById() throws Exception {
@@ -99,8 +129,8 @@ class BeerControllerTest {
         mockMvc.perform(delete(basePath + "/" + beerId)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
-        verify(beerService).deleteBeerById(captor.capture());
-        assertEquals(beerId.toString(), captor.getValue()
+        verify(beerService).deleteBeerById(uuidArgumentCaptor.capture());
+        assertEquals(beerId.toString(), uuidArgumentCaptor.getValue()
                 .toString());
 
 
