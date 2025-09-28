@@ -60,7 +60,7 @@ public class CustomerController {
     @GetMapping(CUSTOMER_ID_URL)
     public Customer getCustomer(@PathVariable("customerId") UUID customerId) {
         log.debug("Get customer by id - Controller: {}", customerId);
-        return customerService.getCustomerById(customerId);
+        return customerService.getCustomerById(customerId).orElseThrow(NotFoundException::new);
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
