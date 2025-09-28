@@ -66,10 +66,17 @@ public class BeerController {
         return beerService.getBeers();
     }
 
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<Void> handleNotFoundException() {
+        log.debug(" -| Not Found handler - Beer Controller - 404 |- ");
+        return ResponseEntity.notFound().build();
+    }
+
 
     @GetMapping(BEER_ID_URL)
     public Beer getBeerById(@PathVariable("beerId") @NotNull UUID beerId) {
         log.debug("Get Beer by Id - in Controller. Id: {}", beerId);
+
         return beerService.getBeerById(beerId);
     }
 }

@@ -172,12 +172,20 @@ class BeerControllerTest {
                         .toString()));
     }
 
+    @Test
     void testJacksonConfig() throws JsonProcessingException {
         assertNotNull(beerServiceImpl);
         Beer beer = beerServiceImpl.getBeers()
                 .get(0);
         String jsonString = objectMapper.writeValueAsString(beer);
         assertEquals(beer, objectMapper.readValue(jsonString, Beer.class));
+    }
+
+    @Test
+    void getBeerByIdNotFound() throws Exception {
+        given(beerService.getBeerById(any(UUID.class))).willThrow(NotFoundException.class);
+        mockMvc.perform(get(BeerController.BEER_ID_URL, UUID.randomUUID()))
+                .andExpect(status().isNotFound());
     }
 
     @Test
