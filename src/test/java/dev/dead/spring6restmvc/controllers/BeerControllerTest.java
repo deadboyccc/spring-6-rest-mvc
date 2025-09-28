@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.hamcrest.Matchers.is;
@@ -183,7 +184,7 @@ class BeerControllerTest {
 
     @Test
     void getBeerByIdNotFound() throws Exception {
-        given(beerService.getBeerById(any(UUID.class))).willThrow(NotFoundException.class);
+        given(beerService.getBeerById(any(UUID.class))).willReturn(Optional.empty());
         mockMvc.perform(get(BeerController.BEER_ID_URL, UUID.randomUUID()))
                 .andExpect(status().isNotFound());
     }
@@ -193,7 +194,7 @@ class BeerControllerTest {
         assertNotNull(beerServiceImpl);
         Beer beer = beerServiceImpl.getBeers()
                 .get(0);
-        given(beerService.getBeerById(beer.getId())).willReturn(beer);
+        given(beerService.getBeerById(beer.getId())).willReturn(Optional.of(beer));
 
 
         mockMvc.perform(get(BeerController.BEER_ID_URL, beer.getId())
