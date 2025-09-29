@@ -90,7 +90,7 @@ public class BeerServiceImpl implements BeerService {
     }
 
     @Override
-    public @NotNull BeerDTO updateBeer(UUID beerId, @NotNull BeerDTO beerDTO) {
+    public Optional<BeerDTO> updateBeer(UUID beerId, @NotNull BeerDTO beerDTO) {
         log.debug("Update Beer - Service id: {}", beerDTO.getId());
         BeerDTO existingBeerDTO = beers.get(beerId);
         existingBeerDTO.setBeerName(beerDTO.getBeerName());
@@ -100,7 +100,7 @@ public class BeerServiceImpl implements BeerService {
         existingBeerDTO.setPrice(beerDTO.getPrice());
         existingBeerDTO.setVersion(existingBeerDTO.getVersion() + 1);
         existingBeerDTO.setUpdatedAt(LocalDateTime.now());
-        return existingBeerDTO;
+        return Optional.of(existingBeerDTO);
         // redundant
 //        return beers.replace(beerId, existingBeer);
 

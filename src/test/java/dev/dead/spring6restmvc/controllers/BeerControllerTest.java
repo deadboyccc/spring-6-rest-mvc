@@ -104,7 +104,7 @@ class BeerControllerTest {
 
         // When
         given(beerService.updateBeer(any(UUID.class), any(BeerDTO.class)))
-                .willReturn(beerDTO);
+                .willReturn(Optional.ofNullable(beerDTO));
 
         // Then
         mockMvc.perform(put(BeerController.BEER_ID_URL, beerId)

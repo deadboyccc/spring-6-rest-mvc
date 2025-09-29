@@ -36,7 +36,16 @@ class BeerControllerIT {
     @Rollback
     @Transactional
     @Test
-    void updateBeerById() {
+    void updateNotFoundBeerById() {
+        Beer beer = returnBeerEntity();
+        assertThrows(NotFoundException.class,
+                () -> beerController.updateBeerById(beer.getId(), beerMapper.beerToBeerDTO(beer)));
+    }
+
+    @Rollback
+    @Transactional
+    @Test
+    void updateFoundBeerById() {
         Beer beer = beerRepository.findAll()
                 .get(0);
         BeerDTO beerDTO = beerMapper.beerToBeerDTO(beer);
