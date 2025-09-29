@@ -125,7 +125,7 @@ class BeerControllerTest {
                 .get(0)
                 .getId();
 
-
+        given(beerService.deleteBeerById(any(UUID.class))).willReturn(true);
         //then
         mockMvc.perform(delete(BeerController.BEER_ID_URL, beerId)
                         .accept(MediaType.APPLICATION_JSON))
