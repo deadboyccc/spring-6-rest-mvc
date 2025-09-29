@@ -40,7 +40,7 @@ public class BeerController {
 
     @SuppressWarnings("rawtypes")
     @PutMapping(BEER_ID_URL)
-    public @NotNull ResponseEntity updateBeer(@PathVariable("beerId") UUID beerId, @RequestBody BeerDTO beerDTO) {
+    public @NotNull ResponseEntity updateBeerById(@PathVariable("beerId") UUID beerId, @RequestBody BeerDTO beerDTO) {
         log.debug("updateBeer beerId={} - Controller", beerId);
         beerService.updateBeer(beerId, beerDTO);
         HttpHeaders responseHeaders = new HttpHeaders();
