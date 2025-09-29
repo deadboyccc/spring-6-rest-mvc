@@ -27,4 +27,17 @@ class CustomerMapperTest {
 
     }
 
+    @Test
+    void fromCustomerDTOToCustomer() {
+        CustomerDTO customerDTO = CustomerDTO.builder()
+                .customerName("test")
+                .build();
+        Customer customer = customerMapper.customerDTOToCustomer(customerDTO);
+        assertNotNull(customer);
+        assertEquals(customerDTO.getCustomerName(), customer.getCustomerName());
+        assertInstanceOf(Customer.class, customer);
+        assertInstanceOf(CustomerDTO.class, customerDTO);
+
+    }
+
 }

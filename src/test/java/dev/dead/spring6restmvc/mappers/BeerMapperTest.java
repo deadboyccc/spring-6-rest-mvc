@@ -40,4 +40,26 @@ class BeerMapperTest {
 
     }
 
+    @Test
+    void formBeerDTOtoBeer() {
+        BeerDTO beerDTO = BeerDTO.builder()
+                .beerName("name")
+                .beerStyle(BeerStyle.LAGER)
+                .price(new BigDecimal(12))
+                .quantityOnHand(12)
+                .upc(UUID.randomUUID()
+                        .toString())
+                .build();
+        Beer beer = beerMapper.beerDTOToBeer(beerDTO);
+        assertNotNull(beer);
+        assertEquals(beerDTO.getBeerName(), beer.getBeerName());
+        assertEquals(beerDTO.getQuantityOnHand(), beer.getQuantityOnHand());
+        assertEquals(beerDTO.getPrice(), beer.getPrice());
+        assertEquals(beerDTO.getUpc(), beer.getUpc());
+        assertEquals(beerDTO.getBeerStyle(), beer.getBeerStyle());
+        assertInstanceOf(BeerDTO.class, beerDTO);
+        assertInstanceOf(Beer.class, beer);
+
+    }
+
 }
