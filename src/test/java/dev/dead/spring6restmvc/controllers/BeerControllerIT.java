@@ -1,6 +1,7 @@
 package dev.dead.spring6restmvc.controllers;
 
 import dev.dead.spring6restmvc.entities.Beer;
+import dev.dead.spring6restmvc.mappers.BeerMapper;
 import dev.dead.spring6restmvc.models.BeerDTO;
 import dev.dead.spring6restmvc.models.BeerStyle;
 import dev.dead.spring6restmvc.repositories.BeerRepository;
@@ -28,6 +29,30 @@ class BeerControllerIT {
 
     @Autowired
     BeerRepository beerRepository;
+
+    @Autowired
+    BeerMapper beerMapper;
+
+    @Rollback
+    @Transactional
+    @Test
+    void updateBeerById() {
+        Beer beer = beerRepository.findAll()
+                .get(0);
+        BeerDTO beerDTO = beerMapper.beerToBeerDTO(beer);
+        beerDTO.setBeerName("New Beer Name");
+
+        ResponseEntity responseEntity = beerController.updateBeerById(beer.getId(), beerDTO);
+        assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
+
+        Beer savedBeer = beerRepository.findById(beer.getId())
+                .get();
+        assertNotNull(savedBeer);
+        assertEquals(beerDTO.getBeerName(), savedBeer.getBeerName());
+//        assertEquals(beerDTO.getVersion() + 1, savedBeer.getVersion());
+
+
+    }
 
     @Rollback
     @Transactional

@@ -1,7 +1,7 @@
 package dev.dead.spring6restmvc.services;
 
+import dev.dead.spring6restmvc.entities.Beer;
 import dev.dead.spring6restmvc.mappers.BeerMapper;
-import dev.dead.spring6restmvc.mappers.BeerMapperImpl;
 import dev.dead.spring6restmvc.models.BeerDTO;
 import dev.dead.spring6restmvc.repositories.BeerRepository;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @Service
@@ -42,7 +43,16 @@ public class BeerServiceJPAImpl implements BeerService {
 
     @Override
     public BeerDTO updateBeer(UUID beerId, BeerDTO beerDTO) {
-        return null;
+        return beerRepository.findById(beerId)
+                .map(foundBeer -> {
+                    foundBeer.setBeerName(beerDTO.getBeerName());
+                    foundBeer.setBeerStyle(beerDTO.getBeerStyle());
+                    foundBeer.setPrice(beerDTO.getPrice());
+                    foundBeer.setQuantityOnHand(beerDTO.getQuantityOnHand());
+                    foundBeer.setUpc(beerDTO.getUpc());
+                    return beerMapper.beerToBeerDTO(beerRepository.save(foundBeer));
+                })
+                .orElse(null);
     }
 
     @Override
