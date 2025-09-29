@@ -22,7 +22,8 @@ public class BeerController {
     private final @NotNull BeerService beerService;
 
     @PatchMapping(BEER_ID_URL)
-    public @NotNull ResponseEntity<BeerDTO> patchBeer(@PathVariable("beerId") UUID beerId, @RequestBody BeerDTO beerDTO) {
+    public @NotNull ResponseEntity<BeerDTO> patchBeer(@PathVariable("beerId") UUID beerId,
+                                                      @RequestBody BeerDTO beerDTO) {
         log.info("Patching beer with id - Controller: {}", beerId);
         beerService.patchBeerById(beerId, beerDTO);
         return ResponseEntity.noContent()
@@ -69,7 +70,8 @@ public class BeerController {
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<Void> handleNotFoundException() {
         log.debug(" -| Not Found handler - Beer Controller - 404 |- ");
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.notFound()
+                .build();
     }
 
 
@@ -77,6 +79,7 @@ public class BeerController {
     public BeerDTO getBeerById(@PathVariable("beerId") @NotNull UUID beerId) {
         log.debug("Get Beer by Id - in Controller. Id: {}", beerId);
 
-        return beerService.getBeerById(beerId).orElseThrow(NotFoundException::new);
+        return beerService.getBeerById(beerId)
+                .orElseThrow(NotFoundException::new);
     }
 }
