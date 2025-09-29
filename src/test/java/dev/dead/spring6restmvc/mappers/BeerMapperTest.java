@@ -12,7 +12,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
+@SpringBootTest(classes = CustomerMapper.class)
 class BeerMapperTest {
     @Autowired
     BeerMapper beerMapper;
@@ -29,6 +29,7 @@ class BeerMapperTest {
                 .build();
 
         BeerDTO beerDTO = beerMapper.beerToBeerDTO(beer);
+        assertNotNull(beerDTO);
         assertEquals(beerDTO.getBeerName(), beer.getBeerName());
         assertEquals(beerDTO.getQuantityOnHand(), beer.getQuantityOnHand());
         assertEquals(beerDTO.getPrice(), beer.getPrice());
