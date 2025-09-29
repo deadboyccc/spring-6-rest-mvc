@@ -19,7 +19,7 @@ import java.util.UUID;
 public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(columnDefinition = "varchar", length = 36, updatable = false, nullable = false)
+    @Column(columnDefinition = "uuid", updatable = false, nullable = false)
     private UUID id;
 
     @Version
