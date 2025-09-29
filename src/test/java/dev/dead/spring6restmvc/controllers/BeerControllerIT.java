@@ -37,10 +37,15 @@ class BeerControllerIT {
     @Transactional
     @Test
     void updateNotFoundBeerById() {
-        Beer beer = returnBeerEntity();
+        UUID notExistingId = UUID.randomUUID();
+
+        BeerDTO beerDto = returnBeerDto();
+        beerDto.setId(null);
+        beerDto.setVersion(null);
         assertThrows(NotFoundException.class,
-                () -> beerController.updateBeerById(beer.getId(), beerMapper.beerToBeerDTO(beer)));
+                () -> beerController.updateBeerById(notExistingId, returnBeerDto()));
     }
+
 
     @Rollback
     @Transactional
@@ -58,7 +63,7 @@ class BeerControllerIT {
                 .get();
         assertNotNull(savedBeer);
         assertEquals(beerDTO.getBeerName(), savedBeer.getBeerName());
-//        assertEquals(beerDTO.getVersion() + 1, savedBeer.getVersion());
+        assertEquals(beerDTO.getVersion() + 1, savedBeer.getVersion());
 
 
     }

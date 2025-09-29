@@ -41,7 +41,7 @@ public class BeerServiceJPAImpl implements BeerService {
 
     @Override
     public Optional<BeerDTO> updateBeer(UUID beerId, BeerDTO beerDTO) {
-        return Optional.ofNullable(beerRepository.findById(beerId)
+        return beerRepository.findById(beerId)
                 .map(foundBeer -> {
                     foundBeer.setBeerName(beerDTO.getBeerName());
                     foundBeer.setBeerStyle(beerDTO.getBeerStyle());
@@ -49,8 +49,7 @@ public class BeerServiceJPAImpl implements BeerService {
                     foundBeer.setQuantityOnHand(beerDTO.getQuantityOnHand());
                     foundBeer.setUpc(beerDTO.getUpc());
                     return beerMapper.beerToBeerDTO(beerRepository.save(foundBeer));
-                })
-                .orElse(null));
+                });
     }
 
     @Override
