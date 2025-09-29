@@ -2,7 +2,7 @@ package dev.dead.spring6restmvc.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dev.dead.spring6restmvc.models.Beer;
+import dev.dead.spring6restmvc.models.BeerDTO;
 import dev.dead.spring6restmvc.models.BeerStyle;
 import dev.dead.spring6restmvc.services.BeerService;
 import dev.dead.spring6restmvc.services.BeerServiceImpl;
@@ -47,7 +47,7 @@ class BeerControllerTest {
     @Captor
     ArgumentCaptor<UUID> uuidArgumentCaptor;
     @Captor
-    ArgumentCaptor<Beer> beerArgumentCaptor;
+    ArgumentCaptor<BeerDTO> beerArgumentCaptor;
 
     @BeforeEach
     void setUp() {
@@ -69,7 +69,7 @@ class BeerControllerTest {
                 .get(0)
                 .getId();
 
-        Beer beer = Beer.builder()
+        BeerDTO beerDTO = BeerDTO.builder()
                 .beerName("NEW BEER TEST")
                 .build();
 
@@ -77,12 +77,12 @@ class BeerControllerTest {
         mockMvc.perform(patch(BeerController.BEER_ID_URL, beerId)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(beer)))
+                        .content(objectMapper.writeValueAsString(beerDTO)))
                 .andExpect(status().isNoContent());
 
         // Then
         verify(beerService).patchBeerById(uuidArgumentCaptor.capture(), beerArgumentCaptor.capture());
-        assertEquals(beer.getBeerName(), beerArgumentCaptor.getValue()
+        assertEquals(beerDTO.getBeerName(), beerArgumentCaptor.getValue()
                 .getBeerName());
         assertEquals(beerId, uuidArgumentCaptor.getValue());
     }
@@ -94,7 +94,7 @@ class BeerControllerTest {
         UUID beerId = beerServiceImpl.getBeers()
                 .get(0)
                 .getId();
-        Beer beer = Beer.builder()
+        BeerDTO beerDTO = BeerDTO.builder()
                 .beerName("NEW BEER TEST")
                 .beerStyle(BeerStyle.PALE_ALE)
                 .upc("123456")
@@ -103,18 +103,18 @@ class BeerControllerTest {
                 .build();
 
         // When
-        given(beerService.updateBeer(any(UUID.class), any(Beer.class)))
-                .willReturn(beer);
+        given(beerService.updateBeer(any(UUID.class), any(BeerDTO.class)))
+                .willReturn(beerDTO);
 
         // Then
         mockMvc.perform(put(BeerController.BEER_ID_URL, beerId)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(beer)))
+                        .content(objectMapper.writeValueAsString(beerDTO)))
                 .andExpect(status().isNoContent())
                 .andExpect(header().exists("Location"))
                 .andExpect(header().string("Location", BeerController.BEER_BASE_URL + "/" + beerId.toString()));
-        verify(beerService).updateBeer(any(UUID.class), any(Beer.class));
+        verify(beerService).updateBeer(any(UUID.class), any(BeerDTO.class));
     }
 
     @Test
@@ -140,7 +140,7 @@ class BeerControllerTest {
     @Test
     void testCreateNewBeer() throws Exception {
         // mimicking dto
-        Beer beer = Beer.builder()
+        BeerDTO beerDTO = BeerDTO.builder()
                 .beerName("NEW BEER TEST")
                 .beerStyle(BeerStyle.PALE_ALE)
                 .upc("123456")
@@ -148,38 +148,38 @@ class BeerControllerTest {
                 .quantityOnHand(24)
                 .build();
 
-        Beer savedBeer = Beer.builder()
+        BeerDTO savedBeerDTO = BeerDTO.builder()
                 .id(UUID.randomUUID())
                 .version(1)
-                .beerName(beer.getBeerName())
-                .beerStyle(beer.getBeerStyle())
-                .upc(beer.getUpc())
-                .price(beer.getPrice())
-                .quantityOnHand(beer.getQuantityOnHand())
+                .beerName(beerDTO.getBeerName())
+                .beerStyle(beerDTO.getBeerStyle())
+                .upc(beerDTO.getUpc())
+                .price(beerDTO.getPrice())
+                .quantityOnHand(beerDTO.getQuantityOnHand())
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .build();
 
-        given(beerService.saveNewBeer(any(Beer.class)))
-                .willReturn(savedBeer);
+        given(beerService.saveNewBeer(any(BeerDTO.class)))
+                .willReturn(savedBeerDTO);
 
         mockMvc.perform(post(BeerController.BEER_BASE_URL)
-                        .content(objectMapper.writeValueAsString(beer))
+                        .content(objectMapper.writeValueAsString(beerDTO))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(header().exists("Location"))
-                .andExpect(header().string("Location", "/api/v1/beer/" + savedBeer.getId()
+                .andExpect(header().string("Location", "/api/v1/beer/" + savedBeerDTO.getId()
                         .toString()));
     }
 
     @Test
     void testJacksonConfig() throws JsonProcessingException {
         assertNotNull(beerServiceImpl);
-        Beer beer = beerServiceImpl.getBeers()
+        BeerDTO beerDTO = beerServiceImpl.getBeers()
                 .get(0);
-        String jsonString = objectMapper.writeValueAsString(beer);
-        assertEquals(beer, objectMapper.readValue(jsonString, Beer.class));
+        String jsonString = objectMapper.writeValueAsString(beerDTO);
+        assertEquals(beerDTO, objectMapper.readValue(jsonString, BeerDTO.class));
     }
 
     @Test
@@ -192,19 +192,19 @@ class BeerControllerTest {
     @Test
     void getBeerByIdTest() throws Exception {
         assertNotNull(beerServiceImpl);
-        Beer beer = beerServiceImpl.getBeers()
+        BeerDTO beerDTO = beerServiceImpl.getBeers()
                 .get(0);
-        given(beerService.getBeerById(beer.getId())).willReturn(Optional.of(beer));
+        given(beerService.getBeerById(beerDTO.getId())).willReturn(Optional.of(beerDTO));
 
 
-        mockMvc.perform(get(BeerController.BEER_ID_URL, beer.getId())
+        mockMvc.perform(get(BeerController.BEER_ID_URL, beerDTO.getId())
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id").value(beer.getId()
+                .andExpect(jsonPath("$.id").value(beerDTO.getId()
                         .toString()))
-                .andExpect(jsonPath("$.beerName").value(beer.getBeerName()))
-                .andExpect(jsonPath("$.beerStyle").value(beer.getBeerStyle()
+                .andExpect(jsonPath("$.beerName").value(beerDTO.getBeerName()))
+                .andExpect(jsonPath("$.beerStyle").value(beerDTO.getBeerStyle()
                         .toString()));
     }
 
