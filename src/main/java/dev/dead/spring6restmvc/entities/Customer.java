@@ -21,6 +21,7 @@ public class Customer {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(columnDefinition = "varchar", length = 36, updatable = false, nullable = false)
     private UUID id;
+
     @Version
     private Integer version;
     private String customerName;
