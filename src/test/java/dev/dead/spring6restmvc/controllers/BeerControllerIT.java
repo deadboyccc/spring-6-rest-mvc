@@ -5,8 +5,6 @@ import dev.dead.spring6restmvc.mappers.BeerMapper;
 import dev.dead.spring6restmvc.models.BeerDTO;
 import dev.dead.spring6restmvc.models.BeerStyle;
 import dev.dead.spring6restmvc.repositories.BeerRepository;
-import dev.dead.spring6restmvc.services.BeerService;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,6 +30,30 @@ class BeerControllerIT {
 
     @Autowired
     BeerMapper beerMapper;
+
+    @Test
+    void deleteNotFoundBeerById() {
+        assertThrows(NotFoundException.class,
+                () -> beerController.deleteBeerById(UUID.randomUUID()));
+
+
+    }
+
+    @Rollback
+    @Transactional
+    @Test
+    void deleteFoundBeerById() {
+        Beer beer = beerRepository.findAll()
+                .get(0);
+
+        ResponseEntity responseEntity = beerController.deleteBeerById(beer.getId());
+
+
+        assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
+        assertTrue(beerRepository.findById(beer.getId())
+                .isEmpty());
+        assertThrows(NotFoundException.class, () -> beerController.getBeerById(beer.getId()));
+    }
 
     @Test
     void updateNotFoundBeerById() {

@@ -33,6 +33,9 @@ public class BeerController {
     @DeleteMapping(BEER_ID_URL)
     public @NotNull ResponseEntity deleteBeerById(@PathVariable("beerId") UUID beerId) {
         log.debug("Delete Beer - Controller id: {}", beerId);
+        if (!beerService.deleteBeerById(beerId)) {
+            throw new NotFoundException();
+        }
         beerService.deleteBeerById(beerId);
         return ResponseEntity.noContent()
                 .build();
