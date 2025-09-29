@@ -33,17 +33,10 @@ class BeerControllerIT {
     @Autowired
     BeerMapper beerMapper;
 
-    @Rollback
-    @Transactional
     @Test
     void updateNotFoundBeerById() {
-        UUID notExistingId = UUID.randomUUID();
-
-        BeerDTO beerDto = returnBeerDto();
-        beerDto.setId(null);
-        beerDto.setVersion(null);
         assertThrows(NotFoundException.class,
-                () -> beerController.updateBeerById(notExistingId, returnBeerDto()));
+                () -> beerController.updateBeerById(UUID.randomUUID(), returnBeerDto()));
     }
 
 
