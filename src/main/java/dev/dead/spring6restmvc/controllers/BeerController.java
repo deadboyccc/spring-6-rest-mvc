@@ -36,7 +36,6 @@ public class BeerController {
         if (!beerService.deleteBeerById(beerId)) {
             throw new NotFoundException();
         }
-        beerService.deleteBeerById(beerId);
         return ResponseEntity.noContent()
                 .build();
     }
