@@ -42,8 +42,9 @@ public class CustomerServiceJPAImpl implements CustomerService {
     }
 
     @Override
-    public CustomerDTO updateCustomerById(UUID customerId, CustomerDTO customerDTO) {
-        return null;
+    public Optional<CustomerDTO> updateCustomerById(UUID customerId, CustomerDTO customerDTO) {
+        return Optional.empty();
+
     }
 
     @Override
@@ -58,7 +59,8 @@ public class CustomerServiceJPAImpl implements CustomerService {
     }
 
     @Override
-    public void patchCustomer(UUID customerId, CustomerDTO customerDTO) {
+    public Optional<CustomerDTO> patchCustomer(UUID customerId, CustomerDTO customerDTO) {
+        return Optional.empty();
 
     }
 }

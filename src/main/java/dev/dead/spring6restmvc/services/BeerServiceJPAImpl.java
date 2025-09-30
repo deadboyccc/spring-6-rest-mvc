@@ -6,6 +6,7 @@ import dev.dead.spring6restmvc.repositories.BeerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -48,7 +49,7 @@ public class BeerServiceJPAImpl implements BeerService {
                     foundBeer.setPrice(beerDTO.getPrice());
                     foundBeer.setQuantityOnHand(beerDTO.getQuantityOnHand());
                     foundBeer.setUpc(beerDTO.getUpc());
-                    return beerMapper.beerToBeerDTO(beerRepository.save(foundBeer));
+                    return beerMapper.beerToBeerDTO(beerRepository.saveAndFlush(foundBeer));
                 });
     }
 

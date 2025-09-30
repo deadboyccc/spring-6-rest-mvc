@@ -74,12 +74,12 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public @NotNull CustomerDTO updateCustomerById(UUID customerId, @NotNull CustomerDTO customerDTO) {
+    public Optional<CustomerDTO> updateCustomerById(UUID customerId, @NotNull CustomerDTO customerDTO) {
         CustomerDTO existing = customers.get(customerId);
         existing.setCustomerName(customerDTO.getCustomerName());
         existing.setUpdatedAt(LocalDateTime.now());
         existing.setVersion(existing.getVersion() + 1);
-        return existing;
+        return Optional.of(existing);
         // redundant
 //        return customers.replace(customerId, existing);
     }
@@ -95,7 +95,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public void patchCustomer(UUID customerId, @NotNull CustomerDTO customerDTO) {
+    public Optional<CustomerDTO> patchCustomer(UUID customerId, @NotNull CustomerDTO customerDTO) {
         log.debug("Patching customer by id - Service {}", customerId);
         var existing = customers.get(customerId);
 
@@ -104,6 +104,7 @@ public class CustomerServiceImpl implements CustomerService {
         }
         existing.setUpdatedAt(LocalDateTime.now());
         existing.setVersion(existing.getVersion() + 1);
+        return Optional.of(existing);
 
 
     }
