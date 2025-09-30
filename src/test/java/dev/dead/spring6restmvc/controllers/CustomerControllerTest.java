@@ -77,7 +77,7 @@ class CustomerControllerTest {
                         .content(objectMapper.writeValueAsString(customerDTO)
                         ))
                 .andExpect(status().isNoContent());
-        verify(customerService, times(2)).patchCustomer(uuidArgumentCaptor.capture(), customerArgumentCaptor.capture());
+        verify(customerService, times(1)).patchCustomer(uuidArgumentCaptor.capture(), customerArgumentCaptor.capture());
         assertEquals(uuidArgumentCaptor.getValue(), customerId);
         assertEquals(customerArgumentCaptor.getValue()
                 .getCustomerName(), customerDTO.getCustomerName());
@@ -127,7 +127,7 @@ class CustomerControllerTest {
                 .andExpect(header().string("Location", CustomerController.CUSTOMER_BASE_URL + "/" + customerId.toString()));
 
         // verify
-        verify(customerService, times(2)).updateCustomerById(uuidArgumentCaptor.capture(), any(CustomerDTO.class));
+        verify(customerService, times(1)).updateCustomerById(uuidArgumentCaptor.capture(), any(CustomerDTO.class));
         assertEquals(customerId.toString(), uuidArgumentCaptor.getValue()
                 .toString());
     }
