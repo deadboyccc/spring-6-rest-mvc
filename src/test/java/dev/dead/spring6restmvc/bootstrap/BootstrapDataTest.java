@@ -29,7 +29,7 @@ class BootstrapDataTest {
 
     @Test
     void run() throws Exception {
-        bootstrapData.run(null);
+        bootstrapData.run();
         assertEquals(3, beerRepository.count());
         assertEquals(3, customerRepository.count());
     }
