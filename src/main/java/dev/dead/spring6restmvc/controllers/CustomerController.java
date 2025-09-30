@@ -31,7 +31,7 @@ public class CustomerController {
     }
 
     @DeleteMapping(CUSTOMER_ID_URL)
-    public @NotNull ResponseEntity deleteCustomer(@PathVariable("customerId") UUID customerId) {
+    public @NotNull ResponseEntity deleteCustomerById(@PathVariable("customerId") UUID customerId) {
         log.debug("Delete customer by id - Controller {}", customerId);
         if (customerService.deleteCustomerById(customerId)) {
 
@@ -42,8 +42,8 @@ public class CustomerController {
     }
 
     @PutMapping(CUSTOMER_ID_URL)
-    public @NotNull ResponseEntity<CustomerDTO> updateBeer(@PathVariable("customerId") @NotNull UUID customerId,
-                                                           @RequestBody CustomerDTO customerDTO) {
+    public @NotNull ResponseEntity<CustomerDTO> updateCustomerById(@PathVariable("customerId") @NotNull UUID customerId,
+                                                                   @RequestBody CustomerDTO customerDTO) {
         customerService.updateCustomerById(customerId, customerDTO);
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.add
