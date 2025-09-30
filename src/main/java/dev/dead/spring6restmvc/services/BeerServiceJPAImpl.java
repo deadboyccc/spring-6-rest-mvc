@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -68,7 +69,7 @@ public class BeerServiceJPAImpl implements BeerService {
     public Optional<BeerDTO> patchBeerById(UUID beerId, BeerDTO beerDTO) {
         return beerRepository.findById(beerId)
                 .map(foundBeer -> {
-                    if (beerDTO.getBeerName() != null) {
+                    if (beerDTO.getBeerName() != null && StringUtils.hasText(beerDTO.getBeerName())) {
                         foundBeer.setBeerName(beerDTO.getBeerName());
                     }
                     if (beerDTO.getBeerStyle() != null) {
@@ -80,7 +81,7 @@ public class BeerServiceJPAImpl implements BeerService {
                     if (beerDTO.getQuantityOnHand() != null) {
                         foundBeer.setQuantityOnHand(beerDTO.getQuantityOnHand());
                     }
-                    if (beerDTO.getUpc() != null) {
+                    if (beerDTO.getUpc() != null && StringUtils.hasText(beerDTO.getUpc())) {
                         foundBeer.setUpc(beerDTO.getUpc());
                     }
                     return beerMapper.beerToBeerDTO(beerRepository.save(foundBeer));

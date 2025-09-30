@@ -23,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -104,18 +105,18 @@ class CustomerControllerTest {
 
     @Test
     void testUpdateCustomer() throws Exception {
-        // when
+        // given
         assertNotNull(customerServiceImpl);
         UUID customerId = customerServiceImpl.getCustomers()
                 .get(0)
                 .getId();
-        CustomerDTO customerDTO = customerServiceImpl.getCustomers()
-                .get(0);
-        // given
+        CustomerDTO customerDTO = CustomerDTO.builder()
+                .customerName("NEW TEST NAME")
+                .build();
         given(customerService.updateCustomerById(any(UUID.class), any(CustomerDTO.class)))
-                .willReturn(null);
+                .willReturn(Optional.of(customerDTO));
 
-        // then
+        // when + then
         mockMvc.perform(put(CustomerController.CUSTOMER_ID_URL, customerId)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -123,8 +124,9 @@ class CustomerControllerTest {
                 .andExpect(status().isNoContent())
                 .andExpect(header().exists("Location"))
                 .andExpect(header().string("Location", CustomerController.CUSTOMER_BASE_URL + "/" + customerId.toString()));
-        verify(customerService).updateCustomerById(uuidArgumentCaptor.capture(), any(CustomerDTO.class));
 
+        // verify
+        verify(customerService, times(2)).updateCustomerById(uuidArgumentCaptor.capture(), any(CustomerDTO.class));
         assertEquals(customerId.toString(), uuidArgumentCaptor.getValue()
                 .toString());
     }
