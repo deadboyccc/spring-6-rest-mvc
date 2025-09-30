@@ -69,6 +69,7 @@ class CustomerControllerTest {
                 .customerName("NEW TEST NAME")
                 .build();
 
+        given(customerService.patchCustomer(any(UUID.class), any(CustomerDTO.class))).willReturn(Optional.of(customerDTO));
         // then
         mockMvc.perform(patch(CustomerController.CUSTOMER_ID_URL, customerId)
                         .accept(MediaType.APPLICATION_JSON)
@@ -76,7 +77,7 @@ class CustomerControllerTest {
                         .content(objectMapper.writeValueAsString(customerDTO)
                         ))
                 .andExpect(status().isNoContent());
-        verify(customerService).patchCustomer(uuidArgumentCaptor.capture(), customerArgumentCaptor.capture());
+        verify(customerService, times(2)).patchCustomer(uuidArgumentCaptor.capture(), customerArgumentCaptor.capture());
         assertEquals(uuidArgumentCaptor.getValue(), customerId);
         assertEquals(customerArgumentCaptor.getValue()
                 .getCustomerName(), customerDTO.getCustomerName());
