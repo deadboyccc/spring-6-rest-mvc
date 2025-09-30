@@ -23,6 +23,12 @@ class CustomerControllerIT {
     @Autowired
     CustomerRepository customerRepository;
 
+    @Test
+    void deleteNotFoundCustomerById() {
+        assertThrows(NotFoundException.class, () -> customerController.deleteCustomer(UUID.randomUUID()));
+
+    }
+
     @Rollback
     @Transactional
     @Test
