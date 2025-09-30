@@ -47,7 +47,13 @@ public class CustomerServiceJPAImpl implements CustomerService {
     }
 
     @Override
-    public void deleteCustomerById(UUID customerId) {
+    public Boolean deleteCustomerById(UUID customerId) {
+        if (customerRepository.existsById(customerId)) {
+            customerRepository.deleteById(customerId);
+            customerRepository.flush();
+            return true;
+        }
+        return false;
 
     }
 
