@@ -95,6 +95,10 @@ class BeerControllerIT {
                 .get(0);
         BeerDTO beerDTO = beerMapper.beerToBeerDTO(beer);
         beerDTO.setBeerName("New Beer Name");
+        beerDTO.setVersion(null);
+        beerDTO.setCreatedAt(null);
+        beerDTO.setUpdatedAt(null);
+        beerDTO.setId(null);
 
         ResponseEntity responseEntity = beerController.updateBeerById(beer.getId(), beerDTO);
         assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
@@ -103,7 +107,7 @@ class BeerControllerIT {
                 .get();
         assertNotNull(savedBeer);
         assertEquals(beerDTO.getBeerName(), savedBeer.getBeerName());
-        assertEquals(beerDTO.getVersion() + 1, savedBeer.getVersion());
+        assertEquals(1, savedBeer.getVersion());
 
 
     }

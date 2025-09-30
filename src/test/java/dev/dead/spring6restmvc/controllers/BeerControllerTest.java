@@ -73,6 +73,7 @@ class BeerControllerTest {
                 .beerName("NEW BEER TEST")
                 .build();
 
+        given(beerService.patchBeerById(any(UUID.class), any(BeerDTO.class))).willReturn(Optional.of(beerDTO));
         // When
         mockMvc.perform(patch(BeerController.BEER_ID_URL, beerId)
                         .accept(MediaType.APPLICATION_JSON)
