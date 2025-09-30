@@ -64,7 +64,26 @@ public class BeerServiceJPAImpl implements BeerService {
     }
 
     @Override
-    public void patchBeerById(UUID beerId, BeerDTO beerDTO) {
+    public Optional<BeerDTO> patchBeerById(UUID beerId, BeerDTO beerDTO) {
+        return beerRepository.findById(beerId)
+                .map(foundBeer -> {
+                    if (beerDTO.getBeerName() != null) {
+                        foundBeer.setBeerName(beerDTO.getBeerName());
+                    }
+                    if (beerDTO.getBeerStyle() != null) {
+                        foundBeer.setBeerStyle(beerDTO.getBeerStyle());
+                    }
+                    if (beerDTO.getPrice() != null) {
+                        foundBeer.setPrice(beerDTO.getPrice());
+                    }
+                    if (beerDTO.getQuantityOnHand() != null) {
+                        foundBeer.setQuantityOnHand(beerDTO.getQuantityOnHand());
+                    }
+                    if (beerDTO.getUpc() != null) {
+                        foundBeer.setUpc(beerDTO.getUpc());
+                    }
+                    return beerMapper.beerToBeerDTO(beerRepository.save(foundBeer));
+                });
 
     }
 }
