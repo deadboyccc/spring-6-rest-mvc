@@ -29,6 +29,49 @@ class CustomerControllerIT {
     @Rollback
     @Transactional
     @Test
+    void PatchFoundCustomerById() {
+        Customer customer = customerRepository.findAll()
+                .get(0);
+        CustomerDTO customerDTO = customerMapper.customerToCustomerDTO(customer);
+
+        customerDTO.setCustomerName("New Test Customer");
+
+        customerDTO.setVersion(null);
+        customerDTO.setId(null);
+        customerDTO.setCreatedAt(null);
+        customerDTO.setUpdatedAt(null);
+
+        ResponseEntity<CustomerDTO> responseEntity = customerController.patchCustomer(customer.getId(), customerDTO);
+        assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
+
+        Customer updatedCustomer = customerRepository.getById(customer.getId());
+
+        assertNotNull(updatedCustomer);
+        assertEquals(customerDTO.getCustomerName(), updatedCustomer.getCustomerName());
+        assertEquals(1, updatedCustomer.getVersion());
+        assertNotNull(updatedCustomer.getCreatedAt());
+        assertNotNull(updatedCustomer.getUpdatedAt());
+
+    }
+
+    @Test
+    void patchNotFoundCustomerById() {
+        assertThrows(NotFoundException.class, () -> {
+            customerController.patchCustomer(UUID.randomUUID(), returnCustomerDto());
+        });
+    }
+
+    @Test
+    void updateNotFoundCustomerById() {
+        assertThrows(NotFoundException.class, () -> {
+            customerController.updateCustomerById(UUID.randomUUID(), returnCustomerDto());
+
+        });
+    }
+
+    @Rollback
+    @Transactional
+    @Test
     void updateFoundCustomerById() {
         Customer customer = customerRepository.findAll()
                 .get(0);
@@ -106,6 +149,18 @@ class CustomerControllerIT {
 
         List<CustomerDTO> dtos = customerController.getCustomers();
         assertEquals(0, dtos.size());
+    }
+
+    Customer returnCustomer() {
+        return Customer.builder()
+                .customerName("test")
+                .build();
+    }
+
+    CustomerDTO returnCustomerDto() {
+        return CustomerDTO.builder()
+                .customerName("test")
+                .build();
     }
 
 }

@@ -25,6 +25,10 @@ public class CustomerController {
     public @NotNull ResponseEntity<CustomerDTO> patchCustomer(@PathVariable("customerId") UUID customerId,
                                                               @RequestBody CustomerDTO customerDTO) {
         log.debug("Patching customer with id - Controller {}", customerId);
+        if (customerService.patchCustomer(customerId, customerDTO)
+                .isEmpty()) {
+            throw new NotFoundException();
+        }
         customerService.patchCustomer(customerId, customerDTO);
         return ResponseEntity.noContent()
                 .build();
@@ -44,6 +48,10 @@ public class CustomerController {
     @PutMapping(CUSTOMER_ID_URL)
     public @NotNull ResponseEntity<CustomerDTO> updateCustomerById(@PathVariable("customerId") @NotNull UUID customerId,
                                                                    @RequestBody CustomerDTO customerDTO) {
+        if (customerService.updateCustomerById(customerId, customerDTO)
+                .isEmpty()) {
+            throw new NotFoundException();
+        }
         customerService.updateCustomerById(customerId, customerDTO);
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.add

@@ -7,6 +7,7 @@ import dev.dead.spring6restmvc.repositories.CustomerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -43,7 +44,11 @@ public class CustomerServiceJPAImpl implements CustomerService {
 
     @Override
     public Optional<CustomerDTO> updateCustomerById(UUID customerId, CustomerDTO customerDTO) {
-        return Optional.empty();
+        return customerRepository.findById(customerId)
+                .map(foundCustomer -> {
+                    foundCustomer.setCustomerName(customerDTO.getCustomerName());
+                    return customerMapper.customerToCustomerDTO(customerRepository.saveAndFlush(foundCustomer));
+                });
 
     }
 
@@ -60,7 +65,13 @@ public class CustomerServiceJPAImpl implements CustomerService {
 
     @Override
     public Optional<CustomerDTO> patchCustomer(UUID customerId, CustomerDTO customerDTO) {
-        return Optional.empty();
+        return customerRepository.findById(customerId)
+                .map(foundCustomer -> {
+                    if (customerDTO.getCustomerName() != null && StringUtils.hasText(customerDTO.getCustomerName())) {
+                        foundCustomer.setCustomerName(customerDTO.getCustomerName());
+                    }
+                    return customerMapper.customerToCustomerDTO(customerRepository.saveAndFlush(foundCustomer));
+                });
 
     }
 }
