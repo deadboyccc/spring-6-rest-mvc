@@ -90,7 +90,9 @@ class CustomerControllerTest {
                 .get(0)
                 .getId();
         //then
+        given(customerService.deleteCustomerById(any(UUID.class))).willReturn(true);
         mockMvc.perform(delete(CustomerController.CUSTOMER_ID_URL, customerId)
+                        .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent()
                 );
