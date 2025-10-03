@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -45,7 +46,8 @@ public class BeerController {
 
     @SuppressWarnings("rawtypes")
     @PutMapping(BEER_ID_URL)
-    public @NotNull ResponseEntity updateBeerById(@PathVariable("beerId") UUID beerId, @RequestBody BeerDTO beerDTO) {
+    public @NotNull ResponseEntity updateBeerById(@PathVariable("beerId") UUID beerId,
+                                                  @RequestBody BeerDTO beerDTO) {
         log.debug("updateBeer beerId={} - Controller", beerId);
         var updatedBeer = beerService.updateBeer(beerId, beerDTO);
         if (updatedBeer.isEmpty()) {
@@ -62,7 +64,7 @@ public class BeerController {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     @PostMapping(BEER_BASE_URL)
-    public @NotNull ResponseEntity addBeer(@RequestBody @NotNull BeerDTO beerDTO) {
+    public @NotNull ResponseEntity addBeer(@RequestBody @Validated @NotNull BeerDTO beerDTO) {
         log.debug("Add Beer - Controller: {}", beerDTO.getBeerName());
         BeerDTO savedBeerDTO = beerService.saveNewBeer(beerDTO);
         HttpHeaders headers = new HttpHeaders();
