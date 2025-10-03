@@ -60,7 +60,23 @@ class BeerControllerTest {
     }
 
     @Test
-    void testCreateBeerNotNullBeerName() throws Exception {
+    void testCreateBeerBankBeerNameValidation() throws Exception {
+        BeerDTO beerDTO = BeerDTO.builder()
+                .beerName("      ")
+                .build();
+        given(beerService.saveNewBeer(any(BeerDTO.class)))
+                .willReturn(beerServiceImpl.getBeers()
+                        .get(0));
+        mockMvc.perform(post(BeerController.BEER_BASE_URL)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(beerDTO))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+
+    }
+
+    @Test
+    void testCreateBeerNotNullBeerNameValidation() throws Exception {
 
         BeerDTO beerDTO = BeerDTO.builder()
                 .build();
