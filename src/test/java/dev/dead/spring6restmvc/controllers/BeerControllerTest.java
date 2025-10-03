@@ -2,8 +2,11 @@ package dev.dead.spring6restmvc.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.JsonPath;
+import dev.dead.spring6restmvc.entities.Beer;
 import dev.dead.spring6restmvc.models.BeerDTO;
 import dev.dead.spring6restmvc.models.BeerStyle;
+import dev.dead.spring6restmvc.repositories.BeerRepository;
 import dev.dead.spring6restmvc.services.BeerService;
 import dev.dead.spring6restmvc.services.BeerServiceImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +21,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -60,10 +64,58 @@ class BeerControllerTest {
     }
 
     @Test
-    void testCreateBeerBankBeerNameValidation() throws Exception {
-        BeerDTO beerDTO = BeerDTO.builder()
-                .beerName("      ")
-                .build();
+    void testUpdateBeerNegativePrice() throws Exception {
+        Beer beer = returnBeerEntity();
+        BeerDTO beerDTO = beerServiceImpl.getBeers()
+                .get(0);
+        beerDTO.setPrice(new BigDecimal("-10.99"));
+        given(beerService.updateBeer(any(UUID.class), any(BeerDTO.class)))
+                .willReturn(Optional.of(beerDTO));
+        mockMvc.perform(put(BeerController.BEER_ID_URL, beer.getId())
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(beerDTO))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.length()", is(1)));
+    }
+
+    @Test
+    void testUpdateBeerBlankBeerNameValidation() throws Exception {
+        Beer beer = returnBeerEntity();
+        BeerDTO beerDTO = beerServiceImpl.getBeers()
+                .get(0);
+        beerDTO.setBeerName("      ");
+        given(beerService.updateBeer(any(UUID.class), any(BeerDTO.class)))
+                .willReturn(Optional.of(beerDTO));
+        mockMvc.perform(put(BeerController.BEER_ID_URL, beer.getId())
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(beerDTO))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.length()", is(1)));
+    }
+
+    @Test
+    void testCreateBeerNegativePrice() throws Exception {
+        BeerDTO beerDTO = beerServiceImpl.getBeers()
+                .get(0);
+        beerDTO.setPrice(new BigDecimal("-10.99"));
+        given(beerService.saveNewBeer(any(BeerDTO.class)))
+                .willReturn(beerServiceImpl.getBeers()
+                        .get(0));
+        mockMvc.perform(post(BeerController.BEER_BASE_URL)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(beerDTO))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+
+    }
+
+    @Test
+    void testCreateBeerBlankBeerNameValidation() throws Exception {
+        BeerDTO beerDTO = beerServiceImpl.getBeers()
+                .get(0);
+        beerDTO.setBeerName("      ");
         given(beerService.saveNewBeer(any(BeerDTO.class)))
                 .willReturn(beerServiceImpl.getBeers()
                         .get(0));
@@ -80,15 +132,21 @@ class BeerControllerTest {
 
         BeerDTO beerDTO = BeerDTO.builder()
                 .build();
+
         given(beerService.saveNewBeer(any(BeerDTO.class)))
                 .willReturn(beerServiceImpl.getBeers()
                         .get(0));
-        mockMvc.perform(post(BeerController.BEER_BASE_URL)
+        MvcResult mvcResult = mockMvc.perform(post(BeerController.BEER_BASE_URL)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(beerDTO))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                //NotBlank - NotNull
+                .andExpect(jsonPath("$.length()", is(6)))
+                .andReturn();
 
+        log.debug("mvcResult: {}", mvcResult.getResponse()
+                .getContentAsString());
     }
 
     @Test
@@ -250,6 +308,20 @@ class BeerControllerTest {
                 .andExpect(jsonPath("$.length()", is(beerServiceImpl.getBeers()
                         .size())));
 
+
+    }
+
+    Beer returnBeerEntity() {
+        return Beer.builder()
+                .id(UUID.randomUUID())
+                .beerName("New Beer")
+                .beerStyle(BeerStyle.LAGER)
+                .price(new BigDecimal(12))
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .version(0)
+                .quantityOnHand(12)
+                .build();
 
     }
 
