@@ -47,7 +47,7 @@ public class BeerController {
     @SuppressWarnings("rawtypes")
     @PutMapping(BEER_ID_URL)
     public @NotNull ResponseEntity updateBeerById(@PathVariable("beerId") UUID beerId,
-                                                  @RequestBody BeerDTO beerDTO) {
+                                                  @RequestBody @Validated BeerDTO beerDTO) {
         log.debug("updateBeer beerId={} - Controller", beerId);
         var updatedBeer = beerService.updateBeer(beerId, beerDTO);
         if (updatedBeer.isEmpty()) {
