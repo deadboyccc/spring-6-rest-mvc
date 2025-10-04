@@ -84,7 +84,7 @@ public class BeerServiceJPAImpl implements BeerService {
                     if (beerDTO.getUpc() != null && StringUtils.hasText(beerDTO.getUpc())) {
                         foundBeer.setUpc(beerDTO.getUpc());
                     }
-                    return beerMapper.beerToBeerDTO(beerRepository.save(foundBeer));
+                    return beerMapper.beerToBeerDTO(beerRepository.saveAndFlush(foundBeer));
                 });
 
     }
