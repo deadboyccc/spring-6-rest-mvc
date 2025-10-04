@@ -2,6 +2,9 @@ package dev.dead.spring6restmvc.entities;
 
 import dev.dead.spring6restmvc.models.BeerStyle;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -22,11 +25,25 @@ public class Beer {
 
     @Version
     private Integer version;
+    @NotNull
+    @NotBlank
+    @Size(max = 50) // validation before db call ( efficient )
+    @Column(length = 50) // db validation ( less efficient if error bubbled )
     private String beerName;
+
+    @NotNull
     private BeerStyle beerStyle;
+
+    @NotNull
+    @NotBlank
+    @Size(max = 255)
     private String upc;
+
     private Integer quantityOnHand;
+
+    @NotNull
     private BigDecimal price;
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
