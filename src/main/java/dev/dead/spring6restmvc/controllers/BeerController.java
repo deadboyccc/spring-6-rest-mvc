@@ -1,6 +1,7 @@
 package dev.dead.spring6restmvc.controllers;
 
 import dev.dead.spring6restmvc.models.BeerDTO;
+import dev.dead.spring6restmvc.models.BeerStyle;
 import dev.dead.spring6restmvc.services.BeerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +25,7 @@ public class BeerController {
 
     @PatchMapping(BEER_ID_URL)
     public @NotNull ResponseEntity<BeerDTO> patchBeer(@PathVariable("beerId") UUID beerId,
-            @RequestBody BeerDTO beerDTO) {
+                                                      @RequestBody BeerDTO beerDTO) {
         log.info("Patching beer with id - Controller: {}", beerId);
         if (!beerService.patchBeerById(beerId, beerDTO)
                 .isEmpty()) {
@@ -47,7 +48,7 @@ public class BeerController {
     @SuppressWarnings("rawtypes")
     @PutMapping(BEER_ID_URL)
     public @NotNull ResponseEntity updateBeerById(@PathVariable("beerId") UUID beerId,
-            @RequestBody @Validated BeerDTO beerDTO) {
+                                                  @RequestBody @Validated BeerDTO beerDTO) {
         log.debug("updateBeer beerId={} - Controller", beerId);
         var updatedBeer = beerService.updateBeer(beerId, beerDTO);
         if (updatedBeer.isEmpty()) {
@@ -62,7 +63,7 @@ public class BeerController {
                 .build();
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @PostMapping(BEER_BASE_URL)
     public @NotNull ResponseEntity addBeer(@RequestBody @Validated @NotNull BeerDTO beerDTO) {
         log.debug("Add Beer - Controller: {}", beerDTO.getBeerName());
@@ -73,13 +74,22 @@ public class BeerController {
     }
 
     @GetMapping(BEER_BASE_URL)
-    public List<BeerDTO> getBeers(@RequestParam(required = false) String beerName) {
+    public List<BeerDTO> getBeers(@RequestParam(required = false) String beerName,
+                                  @RequestParam(required = false) BeerStyle beerStyle,
+                                  Boolean showInventory) {
         log.debug("Get Beers - Controller");
+        //---
+        // debug log
         if (beerName != null) {
             log.debug(" -| Searching for beer name: {} |- ", beerName);
-            log.debug("Beer Name: {}", beerName);
+        } else if (beerStyle != null) {
+            log.debug(" -| Searching for beer style: {} |- ", beerStyle);
+
+        } else if (showInventory != null) {
+            log.debug(" -| Showing inventory: {} |- ", showInventory);
         }
-        return beerService.getBeers(beerName);
+        // ---
+        return beerService.getBeers(beerName, beerStyle, showInventory);
     }
 
     @ExceptionHandler(NotFoundException.class)

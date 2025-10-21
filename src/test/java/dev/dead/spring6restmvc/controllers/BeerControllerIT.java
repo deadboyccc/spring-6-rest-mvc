@@ -7,6 +7,7 @@ import dev.dead.spring6restmvc.models.BeerDTO;
 import dev.dead.spring6restmvc.models.BeerStyle;
 import dev.dead.spring6restmvc.repositories.BeerRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.hamcrest.core.IsNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +27,7 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -56,6 +55,74 @@ class BeerControllerIT {
     void setUp() {
         mockMvc = MockMvcBuilders.webAppContextSetup(wac)
                 .build();
+    }
+
+    @Test
+    void tesListBeersByStyleAndNameShowInventoryTrue() throws Exception {
+        int expectedCount = beerRepository
+                .findAllByBeerNameIsLikeIgnoreCaseAndBeerStyle("%" + "IPA" + "%", BeerStyle.IPA)
+                .size();
+
+        mockMvc.perform(get(BeerController.BEER_BASE_URL)
+                        .queryParam("beerName", "IPA")
+                        .queryParam("beerStyle", BeerStyle.IPA.name())
+                        .queryParam("showInventory", "true"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()", is(expectedCount)))
+                .andExpect(jsonPath("$.[0].quantityOnHand").value(IsNull.notNullValue()));
+    }
+
+    @Test
+    void tesListBeersByStyleAndNameShowInventoryFalse() throws Exception {
+        int expectedCount = beerRepository
+                .findAllByBeerNameIsLikeIgnoreCaseAndBeerStyle("%" + "IPA" + "%", BeerStyle.IPA)
+                .size();
+
+        mockMvc.perform(get(BeerController.BEER_BASE_URL)
+                        .queryParam("beerName", "IPA")
+                        .queryParam("beerStyle", BeerStyle.IPA.name())
+                        .queryParam("showInventory", "false"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()", is(expectedCount)))
+                .andExpect(jsonPath("$.[0].quantityOnHand").value(IsNull.nullValue()));
+    }
+
+    @Test
+    void tesListBeersByStyleAndName() throws Exception {
+        int expectedCount = beerRepository
+                .findAllByBeerNameIsLikeIgnoreCaseAndBeerStyle("%" + "IPA" + "%", BeerStyle.IPA)
+                .size();
+
+        mockMvc.perform(get(BeerController.BEER_BASE_URL)
+                        .queryParam("beerName", "IPA")
+                        .queryParam("beerStyle", BeerStyle.IPA.name()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()", is(expectedCount)));
+    }
+
+    @Test
+    void testListBeersQueryByBeerStyle() throws Exception {
+        String query = BeerStyle.IPA.name();
+        int expected = beerRepository.findAllByBeerStyle(BeerStyle.valueOf(query))
+                .size();
+
+        var mvcResult = mockMvc.perform(get(BeerController.BEER_BASE_URL)
+                        .queryParam("beerStyle", query))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String content = mvcResult.getResponse()
+                .getContentAsString();
+        // map response to list and assert size
+        var list = objectMapper.readValue(content, List.class);
+        assertEquals(expected, list.size());
+        // get the param
+        String beerStyle = mvcResult.getRequest()
+                .getParameter("beerStyle");
+        log.debug("beerName: {}", beerStyle);
+        log.debug("query: {}", query);
+        log.debug("expected: {}", expected);
+        assertEquals(query, beerStyle);
     }
 
     @Test
@@ -253,7 +320,7 @@ class BeerControllerIT {
 
     @Test
     void getBeers() {
-        List<BeerDTO> dtos = beerController.getBeers(null);
+        List<BeerDTO> dtos = beerController.getBeers(null, null, false);
         assertTrue(dtos.size() > 1000);
     }
 
@@ -266,7 +333,7 @@ class BeerControllerIT {
 
         assertNotNull(beerController);
         assertNotNull(beerRepository);
-        List<BeerDTO> dtos = beerController.getBeers(null);
+        List<BeerDTO> dtos = beerController.getBeers(null, null, false);
         assertEquals(0, dtos.size());
     }
 
