@@ -32,7 +32,6 @@ public class BeerServiceJPAImpl implements BeerService {
     public List<BeerDTO> getBeers(String beerName) {
         List<Beer> beerList;
         if (StringUtils.hasText(beerName)) {
-            //todo - implement search
             beerList = listBeersByBeerName(beerName);
         } else {
             beerList = beerRepository.findAll();
@@ -46,7 +45,7 @@ public class BeerServiceJPAImpl implements BeerService {
     }
 
     List<Beer> listBeersByBeerName(String beerName) {
-        return new ArrayList<>();
+        return beerRepository.findAllByBeerNameIsLikeIgnoreCase("%" + beerName + "%");
     }
 
     @Override

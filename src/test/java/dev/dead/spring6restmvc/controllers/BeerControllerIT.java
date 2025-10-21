@@ -6,6 +6,7 @@ import dev.dead.spring6restmvc.mappers.BeerMapper;
 import dev.dead.spring6restmvc.models.BeerDTO;
 import dev.dead.spring6restmvc.models.BeerStyle;
 import dev.dead.spring6restmvc.repositories.BeerRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,7 @@ import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+@Slf4j
 @SpringBootTest
 class BeerControllerIT {
     @Autowired
@@ -58,15 +60,15 @@ class BeerControllerIT {
 
     @Test
     void testListBeersQueryByBeerName() throws Exception {
-        var request = mockMvc.perform(get(BeerController.BEER_BASE_URL).queryParam("beerName", "IPA"))
-
+        var request = mockMvc.perform(get(BeerController.BEER_BASE_URL)
+                        .queryParam("beerName", "IPA"))
                 .andExpect(status().isOk())
-                // needs changing
                 .andExpect(jsonPath("$.size()", is(2413)))
                 .andReturn()
                 .getRequest();
         //get the param
         String beerName = request.getParameter("beerName");
+        log.debug("beerName: {}", beerName);
         assertEquals("IPA", beerName);
     }
 
