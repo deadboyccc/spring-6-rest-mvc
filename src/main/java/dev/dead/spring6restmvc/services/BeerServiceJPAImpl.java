@@ -1,5 +1,6 @@
 package dev.dead.spring6restmvc.services;
 
+import dev.dead.spring6restmvc.entities.Beer;
 import dev.dead.spring6restmvc.mappers.BeerMapper;
 import dev.dead.spring6restmvc.models.BeerDTO;
 import dev.dead.spring6restmvc.repositories.BeerRepository;
@@ -8,6 +9,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -28,11 +30,23 @@ public class BeerServiceJPAImpl implements BeerService {
 
     @Override
     public List<BeerDTO> getBeers(String beerName) {
+        List<Beer> beerList;
+        if (StringUtils.hasText(beerName)) {
+            //todo - implement search
+            beerList = listBeersByBeerName(beerName);
+        } else {
+            beerList = beerRepository.findAll();
+
+        }
         return
-                beerRepository.findAll()
+                beerList
                         .stream()
                         .map(beerMapper::beerToBeerDTO)
                         .collect(Collectors.toList());
+    }
+
+    List<Beer> listBeersByBeerName(String beerName) {
+        return new ArrayList<>();
     }
 
     @Override
