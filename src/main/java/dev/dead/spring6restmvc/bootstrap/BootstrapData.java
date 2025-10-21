@@ -45,6 +45,7 @@ public class BootstrapData implements CommandLineRunner {
 
     private void loadCsvData() throws FileNotFoundException {
         if (beerRepository.count() < 30) {
+            log.debug("Loading Beer Data From CSV");
             File file = ResourceUtils.getFile("classpath:csvdata/beers.csv");
             List<BeerCSVRecord> recs = beerCsvService.convertToCSV(file);
 
@@ -71,6 +72,8 @@ public class BootstrapData implements CommandLineRunner {
                         .quantityOnHand(beerCSVRecord.getCount())
                         .build());
             });
+            log.debug("Beer Data Loaded From CSV");
+            log.debug("Beer Data Count: {}", beerRepository.count());
         }
 
     }

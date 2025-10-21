@@ -73,8 +73,13 @@ public class BeerController {
     }
 
     @GetMapping(BEER_BASE_URL)
-    public List<BeerDTO> getBeers() {
-        return beerService.getBeers();
+    public List<BeerDTO> getBeers(@RequestParam(required = false) String beerName) {
+        log.debug("Get Beers - Controller");
+        if (beerName != null) {
+            log.debug(" -| Searching for beer name: {} |- ", beerName);
+            log.debug("Beer Name: {}", beerName);
+        }
+        return beerService.getBeers(null);
     }
 
     @ExceptionHandler(NotFoundException.class)

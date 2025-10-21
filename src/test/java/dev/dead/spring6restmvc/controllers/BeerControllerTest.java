@@ -2,11 +2,9 @@ package dev.dead.spring6restmvc.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jayway.jsonpath.JsonPath;
 import dev.dead.spring6restmvc.entities.Beer;
 import dev.dead.spring6restmvc.models.BeerDTO;
 import dev.dead.spring6restmvc.models.BeerStyle;
-import dev.dead.spring6restmvc.repositories.BeerRepository;
 import dev.dead.spring6restmvc.services.BeerService;
 import dev.dead.spring6restmvc.services.BeerServiceImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -66,7 +64,7 @@ class BeerControllerTest {
     @Test
     void testUpdateBeerNegativePrice() throws Exception {
         Beer beer = returnBeerEntity();
-        BeerDTO beerDTO = beerServiceImpl.getBeers()
+        BeerDTO beerDTO = beerServiceImpl.getBeers(null)
                 .get(0);
         beerDTO.setPrice(new BigDecimal("-10.99"));
         given(beerService.updateBeer(any(UUID.class), any(BeerDTO.class)))
@@ -82,7 +80,7 @@ class BeerControllerTest {
     @Test
     void testUpdateBeerBlankBeerNameValidation() throws Exception {
         Beer beer = returnBeerEntity();
-        BeerDTO beerDTO = beerServiceImpl.getBeers()
+        BeerDTO beerDTO = beerServiceImpl.getBeers(null)
                 .get(0);
         beerDTO.setBeerName("      ");
         given(beerService.updateBeer(any(UUID.class), any(BeerDTO.class)))
@@ -97,11 +95,11 @@ class BeerControllerTest {
 
     @Test
     void testCreateBeerNegativePrice() throws Exception {
-        BeerDTO beerDTO = beerServiceImpl.getBeers()
+        BeerDTO beerDTO = beerServiceImpl.getBeers(null)
                 .get(0);
         beerDTO.setPrice(new BigDecimal("-10.99"));
         given(beerService.saveNewBeer(any(BeerDTO.class)))
-                .willReturn(beerServiceImpl.getBeers()
+                .willReturn(beerServiceImpl.getBeers(null)
                         .get(0));
         mockMvc.perform(post(BeerController.BEER_BASE_URL)
                         .accept(MediaType.APPLICATION_JSON)
@@ -113,11 +111,11 @@ class BeerControllerTest {
 
     @Test
     void testCreateBeerBlankBeerNameValidation() throws Exception {
-        BeerDTO beerDTO = beerServiceImpl.getBeers()
+        BeerDTO beerDTO = beerServiceImpl.getBeers(null)
                 .get(0);
         beerDTO.setBeerName("      ");
         given(beerService.saveNewBeer(any(BeerDTO.class)))
-                .willReturn(beerServiceImpl.getBeers()
+                .willReturn(beerServiceImpl.getBeers(null)
                         .get(0));
         mockMvc.perform(post(BeerController.BEER_BASE_URL)
                         .accept(MediaType.APPLICATION_JSON)
@@ -134,7 +132,7 @@ class BeerControllerTest {
                 .build();
 
         given(beerService.saveNewBeer(any(BeerDTO.class)))
-                .willReturn(beerServiceImpl.getBeers()
+                .willReturn(beerServiceImpl.getBeers(null)
                         .get(0));
         MvcResult mvcResult = mockMvc.perform(post(BeerController.BEER_BASE_URL)
                         .accept(MediaType.APPLICATION_JSON)
@@ -154,7 +152,7 @@ class BeerControllerTest {
 
         // Given
         assertNotNull(beerServiceImpl);
-        UUID beerId = beerServiceImpl.getBeers()
+        UUID beerId = beerServiceImpl.getBeers(null)
                 .get(0)
                 .getId();
 
@@ -181,7 +179,7 @@ class BeerControllerTest {
     void testUpdateBeerById() throws Exception {
         // Given
         assertNotNull(beerServiceImpl);
-        UUID beerId = beerServiceImpl.getBeers()
+        UUID beerId = beerServiceImpl.getBeers(null)
                 .get(0)
                 .getId();
         BeerDTO beerDTO = BeerDTO.builder()
@@ -211,7 +209,7 @@ class BeerControllerTest {
     void testDeleteBeerById() throws Exception {
         //when 
         assertNotNull(beerServiceImpl);
-        UUID beerId = beerServiceImpl.getBeers()
+        UUID beerId = beerServiceImpl.getBeers(null)
                 .get(0)
                 .getId();
 
@@ -266,7 +264,7 @@ class BeerControllerTest {
     @Test
     void testJacksonConfig() throws JsonProcessingException {
         assertNotNull(beerServiceImpl);
-        BeerDTO beerDTO = beerServiceImpl.getBeers()
+        BeerDTO beerDTO = beerServiceImpl.getBeers(null)
                 .get(0);
         String jsonString = objectMapper.writeValueAsString(beerDTO);
         assertEquals(beerDTO, objectMapper.readValue(jsonString, BeerDTO.class));
@@ -282,7 +280,7 @@ class BeerControllerTest {
     @Test
     void getBeerByIdTest() throws Exception {
         assertNotNull(beerServiceImpl);
-        BeerDTO beerDTO = beerServiceImpl.getBeers()
+        BeerDTO beerDTO = beerServiceImpl.getBeers(null)
                 .get(0);
         given(beerService.getBeerById(beerDTO.getId())).willReturn(Optional.of(beerDTO));
 
@@ -301,11 +299,11 @@ class BeerControllerTest {
     @Test
     void getBeersTest() throws Exception {
         assertNotNull(beerServiceImpl);
-        given(beerService.getBeers()).willReturn(beerServiceImpl.getBeers());
+        given(beerService.getBeers(null)).willReturn(beerServiceImpl.getBeers(null));
         mockMvc.perform(get(BeerController.BEER_BASE_URL).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.length()", is(beerServiceImpl.getBeers()
+                .andExpect(jsonPath("$.length()", is(beerServiceImpl.getBeers(null)
                         .size())));
 
 

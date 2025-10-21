@@ -56,6 +56,20 @@ class BeerControllerIT {
                 .build();
     }
 
+    @Test
+    void testListBeersQueryByBeerName() throws Exception {
+        var request = mockMvc.perform(get(BeerController.BEER_BASE_URL).queryParam("beerName", "IPA"))
+
+                .andExpect(status().isOk())
+                // needs changing
+                .andExpect(jsonPath("$.size()", is(2413)))
+                .andReturn()
+                .getRequest();
+        //get the param
+        String beerName = request.getParameter("beerName");
+        assertEquals("IPA", beerName);
+    }
+
     @Rollback
     @Transactional
     @Test
@@ -215,7 +229,7 @@ class BeerControllerIT {
 
     @Test
     void getBeers() {
-        List<BeerDTO> dtos = beerController.getBeers();
+        List<BeerDTO> dtos = beerController.getBeers(null);
         assertTrue(dtos.size() > 1000);
     }
 
@@ -228,7 +242,7 @@ class BeerControllerIT {
 
         assertNotNull(beerController);
         assertNotNull(beerRepository);
-        List<BeerDTO> dtos = beerController.getBeers();
+        List<BeerDTO> dtos = beerController.getBeers(null);
         assertEquals(0, dtos.size());
     }
 
