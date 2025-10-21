@@ -22,6 +22,7 @@ public class Customer {
     @Column(columnDefinition = "uuid", updatable = false, nullable = false)
     private UUID id;
 
+    private String email;
     @Version
     private Integer version;
     private String customerName;
