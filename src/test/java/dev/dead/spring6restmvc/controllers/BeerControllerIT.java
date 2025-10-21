@@ -59,6 +59,21 @@ class BeerControllerIT {
     }
 
     @Test
+    void testListBeersQueryByBeerNameInvalidName() throws Exception {
+        var request = mockMvc.perform(get(BeerController.BEER_BASE_URL)
+                        .queryParam("beerName", UUID.randomUUID()
+                                .toString()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()", is(0)))
+                .andReturn()
+                .getRequest();
+        //get the param
+        String beerName = request.getParameter("beerName");
+        log.debug("beerName: {}", beerName);
+        assertEquals("IPA", beerName);
+    }
+
+    @Test
     void testListBeersQueryByBeerName() throws Exception {
         var request = mockMvc.perform(get(BeerController.BEER_BASE_URL)
                         .queryParam("beerName", "IPA"))

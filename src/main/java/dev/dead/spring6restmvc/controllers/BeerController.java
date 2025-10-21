@@ -24,7 +24,7 @@ public class BeerController {
 
     @PatchMapping(BEER_ID_URL)
     public @NotNull ResponseEntity<BeerDTO> patchBeer(@PathVariable("beerId") UUID beerId,
-                                                      @RequestBody BeerDTO beerDTO) {
+            @RequestBody BeerDTO beerDTO) {
         log.info("Patching beer with id - Controller: {}", beerId);
         if (!beerService.patchBeerById(beerId, beerDTO)
                 .isEmpty()) {
@@ -47,7 +47,7 @@ public class BeerController {
     @SuppressWarnings("rawtypes")
     @PutMapping(BEER_ID_URL)
     public @NotNull ResponseEntity updateBeerById(@PathVariable("beerId") UUID beerId,
-                                                  @RequestBody @Validated BeerDTO beerDTO) {
+            @RequestBody @Validated BeerDTO beerDTO) {
         log.debug("updateBeer beerId={} - Controller", beerId);
         var updatedBeer = beerService.updateBeer(beerId, beerDTO);
         if (updatedBeer.isEmpty()) {
@@ -62,7 +62,7 @@ public class BeerController {
                 .build();
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @PostMapping(BEER_BASE_URL)
     public @NotNull ResponseEntity addBeer(@RequestBody @Validated @NotNull BeerDTO beerDTO) {
         log.debug("Add Beer - Controller: {}", beerDTO.getBeerName());
@@ -79,7 +79,7 @@ public class BeerController {
             log.debug(" -| Searching for beer name: {} |- ", beerName);
             log.debug("Beer Name: {}", beerName);
         }
-        return beerService.getBeers(null);
+        return beerService.getBeers(beerName);
     }
 
     @ExceptionHandler(NotFoundException.class)
@@ -88,7 +88,6 @@ public class BeerController {
         return ResponseEntity.notFound()
                 .build();
     }
-
 
     @GetMapping(BEER_ID_URL)
     public BeerDTO getBeerById(@PathVariable("beerId") @NotNull UUID beerId) {
