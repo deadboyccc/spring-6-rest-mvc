@@ -216,7 +216,7 @@ class BeerControllerIT {
     @Test
     void getBeers() {
         List<BeerDTO> dtos = beerController.getBeers();
-        assertEquals(3, dtos.size());
+        assertTrue(dtos.size() > 1000);
     }
 
     @Rollback

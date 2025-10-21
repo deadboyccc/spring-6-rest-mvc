@@ -23,14 +23,14 @@ class BootstrapDataTest {
 
     @BeforeEach
     void setUp() {
-        bootstrapData = new BootstrapData(beerRepository, customerRepository);
+        bootstrapData = new BootstrapData(beerRepository, customerRepository, null);
 
     }
 
     @Test
     void run() throws Exception {
         bootstrapData.run();
-        assertEquals(3, beerRepository.count());
+        assertTrue(beerRepository.count() > 1000);
         assertEquals(3, customerRepository.count());
     }
 }
