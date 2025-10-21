@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @DataJpaTest
 @Import(BeerCsvServiceImpl.class)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class BootstrapDataTest {
+public class BootstrapDataTest {
 
     @Autowired
     BeerRepository beerRepository;
