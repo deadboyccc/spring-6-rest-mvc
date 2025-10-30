@@ -20,19 +20,17 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class PostgresqlTestContainerIT {
     @Container
     @ServiceConnection
-    static PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:16.10");
+    static PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:16.10")
+            .withDatabaseName("spring6restmvc")
+            .withUsername("postgres")
+            .withPassword("123")
+            .withReuse(true);
+
     @Autowired
     DataSource dataSource;
+
     @Autowired
     BeerRepository beerRepository;
-
-//    @DynamicPropertySource
-//    static void postgresProperties(DynamicPropertyRegistry registry) {
-//        registry.add("spring.datasource.url", postgreSQLContainer::getJdbcUrl);
-//        registry.add("spring.datasource.username", postgreSQLContainer::getUsername);
-//        registry.add("spring.datasource.password", postgreSQLContainer::getPassword);
-//
-//    }
 
     @Test
     void testListBeers() {
