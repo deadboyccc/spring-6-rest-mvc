@@ -19,6 +19,7 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.math.BigDecimal;
@@ -57,6 +58,18 @@ class BeerControllerIT {
                 .build();
     }
 
+    @Test
+    void tesListBeersByStyleAndNameShowInventoryTruePage1() throws Exception {
+        mockMvc.perform(get(BeerController.BEER_BASE_URL)
+                        .queryParam("beerName", "IPA")
+                        .queryParam("beerStyle", BeerStyle.IPA.name())
+                        .queryParam("showInventory", "true")
+                        .queryParam("pageNumber", "2")
+                        .queryParam("pageSize", "50"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()", is(50)))
+                .andExpect(jsonPath("$.[0].quantityOnHand").value(IsNull.notNullValue()));
+    }
     @Test
     void tesListBeersByStyleAndNameShowInventoryTrue() throws Exception {
         int expectedCount = beerRepository
