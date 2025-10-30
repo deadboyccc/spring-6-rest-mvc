@@ -1,11 +1,12 @@
 package dev.dead.spring6restmvc.repositories;
 
-import dev.dead.spring6restmvc.bootstrap.BootstrapDataTest;
+import dev.dead.spring6restmvc.bootstrap.BootstrapData;
 import dev.dead.spring6restmvc.entities.Beer;
 import dev.dead.spring6restmvc.models.BeerStyle;
 import dev.dead.spring6restmvc.services.BeerCsvServiceImpl;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolationException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -20,10 +21,24 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@Import({BootstrapDataTest.class, BeerCsvServiceImpl.class})
+@Import({ BeerCsvServiceImpl.class })
 class BeerRepositoryTest {
     @Autowired
     BeerRepository beerRepository;
+
+    @Autowired
+    CustomerRepository customerRepository;
+
+    @Autowired
+    BeerCsvServiceImpl beerCsvService;
+
+    @BeforeEach
+    void setUp() throws Exception {
+        beerRepository.deleteAll();
+        customerRepository.deleteAll();
+        BootstrapData bootstrapData = new BootstrapData(beerRepository, customerRepository, beerCsvService);
+        bootstrapData.run();
+    }
 
     @Test
     void testGetBeersQueryByBeerName() {
@@ -38,7 +53,6 @@ class BeerRepositoryTest {
     @Test
     void testSaveBeerNameTooLongEntityValidation() {
 
-
         assertThrows(ConstraintViolationException.class, () -> {
 
             Beer savedBeer = beerRepository.saveAndFlush(
@@ -51,8 +65,7 @@ class BeerRepositoryTest {
                                     .toString())
                             .price(new BigDecimal(12))
                             .quantityOnHand(12)
-                            .build()
-            );
+                            .build());
         });
     }
 
@@ -68,8 +81,7 @@ class BeerRepositoryTest {
                                 .toString())
                         .price(new BigDecimal(12))
                         .quantityOnHand(12)
-                        .build()
-        );
+                        .build());
         assertNotNull(savedBeer);
         assertNotNull(savedBeer.getId());
     }
