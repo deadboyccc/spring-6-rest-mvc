@@ -320,7 +320,7 @@ class BeerControllerIT {
 
     @Test
     void getBeers() {
-        List<BeerDTO> dtos = beerController.getBeers(null, null, false);
+        List<BeerDTO> dtos = beerController.getBeers(null, null, false, 1, 25);
         assertTrue(dtos.size() > 1000);
     }
 
@@ -333,7 +333,7 @@ class BeerControllerIT {
 
         assertNotNull(beerController);
         assertNotNull(beerRepository);
-        List<BeerDTO> dtos = beerController.getBeers(null, null, false);
+        List<BeerDTO> dtos = beerController.getBeers(null, null, false, 1, 25);
         assertEquals(0, dtos.size());
     }
 

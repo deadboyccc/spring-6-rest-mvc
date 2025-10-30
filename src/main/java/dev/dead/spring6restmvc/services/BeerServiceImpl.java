@@ -64,7 +64,8 @@ public class BeerServiceImpl implements BeerService {
     }
 
     @Override
-    public @NotNull List<BeerDTO> getBeers(String beerName, BeerStyle beerStyle, Boolean showInventory) {
+    public @NotNull List<BeerDTO> getBeers(String beerName, BeerStyle beerStyle, Boolean showInventory,
+                                           Integer pageNumber, Integer pageSize) {
         log.debug("getBeers() - Service");
         return new ArrayList<>(beers.values());
 

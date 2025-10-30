@@ -31,7 +31,8 @@ public class BeerServiceJPAImpl implements BeerService {
     }
 
     @Override
-    public List<BeerDTO> getBeers(String beerName, BeerStyle beerStyle, Boolean showInventory) {
+    public List<BeerDTO> getBeers(String beerName, BeerStyle beerStyle, Boolean showInventory, Integer pageNumber,
+                                  Integer pageSize) {
         List<Beer> beerList;
         // query params
         if (StringUtils.hasText(beerName) && beerStyle == null) {

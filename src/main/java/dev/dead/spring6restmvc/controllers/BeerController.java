@@ -76,7 +76,9 @@ public class BeerController {
     @GetMapping(BEER_BASE_URL)
     public List<BeerDTO> getBeers(@RequestParam(required = false) String beerName,
                                   @RequestParam(required = false) BeerStyle beerStyle,
-                                  Boolean showInventory) {
+                                  @RequestParam(required = false) Boolean showInventory,
+                                  @RequestParam(required = false) Integer pageNumber,
+                                  @RequestParam(required = false)   Integer pageSize) {
         log.debug("Get Beers - Controller");
         //---
         // debug log
@@ -89,7 +91,7 @@ public class BeerController {
             log.debug(" -| Showing inventory: {} |- ", showInventory);
         }
         // ---
-        return beerService.getBeers(beerName, beerStyle, showInventory);
+        return beerService.getBeers(beerName, beerStyle, showInventory, 1, 25);
     }
 
     @ExceptionHandler(NotFoundException.class)
