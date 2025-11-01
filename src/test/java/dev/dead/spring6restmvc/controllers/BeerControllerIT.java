@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -117,25 +118,41 @@ class BeerControllerIT {
                 .andExpect(jsonPath("$.content.length()", is((int) expectedCount)));
     }
 
-    @Test
-    void testListBeersQueryByBeerStyle() throws Exception {
+@Test
+void testListBeersQueryByBeerStyle() throws Exception {
     BeerStyle testStyle = BeerStyle.IPA;
-    long expected = beerRepository.findAllByBeerStyle(testStyle, Pageable.unpaged())
-            .getTotalElements();
-    
+    Page<Beer> beerPage = beerRepository.findAllByBeerStyle(testStyle, Pageable.unpaged());
+    long expected = beerPage.getTotalElements();
+
+    // Ensure we have test data
+    assertTrue(expected > 0, "Test requires IPA beers in database");
+
     var mvcResult = mockMvc.perform(get(BeerController.BEER_BASE_URL)
                     .queryParam("beerStyle", testStyle.name())
+                    .queryParam("pageNumber", "0")  // Explicitly set page number
                     .queryParam("pageSize", "1000"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.totalElements").value(expected))  // Verify total count
             .andReturn();
-    
-    String content = mvcResult.getResponse().getContentAsString();
-    var list = objectMapper.readTree(content).get("content");
-    
-    assertEquals(expected, (long) list.size());
-}
 
+    String content = mvcResult.getResponse()
+            .getContentAsString();
+    var jsonNode = objectMapper.readTree(content);
+    var list = jsonNode.get("content");
+
+    // Verify the page content size matches what we got
+    assertEquals(expected, list.size(),
+            "Page content size should match expected or page size limit");
+
+    // Verify all returned beers are actually IPAs
+    for (int i = 0; i < list.size(); i++) {
+        assertEquals(testStyle.name(), list.get(i)
+                        .get("beerStyle")
+                        .asText(),
+                "All returned beers should be of style " + testStyle);
+    }
+}
     @Test
     void testListBeersQueryByBeerNameInvalidName() throws Exception {
         String uuid = UUID.randomUUID()
@@ -380,4 +397,3 @@ class BeerControllerIT {
                 .build();
     }
 }
-

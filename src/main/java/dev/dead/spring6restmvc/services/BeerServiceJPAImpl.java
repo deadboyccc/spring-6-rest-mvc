@@ -69,7 +69,7 @@ public class BeerServiceJPAImpl implements BeerService {
         }
 
         if (pageSize != null && pageSize > 0) {
-            queryPageSize = Math.min(pageSize, 500);
+            queryPageSize = Math.min(pageSize, 1800);
         } else {
             queryPageSize = DEFAULT_PAGE_SIZE;
         }
