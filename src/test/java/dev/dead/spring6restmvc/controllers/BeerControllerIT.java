@@ -20,6 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -66,57 +67,58 @@ class BeerControllerIT {
                         .queryParam("pageNumber", "2")
                         .queryParam("pageSize", "50"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()", is(50)))
-                .andExpect(jsonPath("$.[0].quantityOnHand").value(IsNull.notNullValue()));
+                // page content array should have up to 50 items
+                .andExpect(jsonPath("$.content.length()", is(50)))
+                .andExpect(jsonPath("$.content[0].quantityOnHand").value(IsNull.notNullValue()));
     }
     @Test
     void tesListBeersByStyleAndNameShowInventoryTrue() throws Exception {
-        int expectedCount = beerRepository
-                .findAllByBeerNameIsLikeIgnoreCaseAndBeerStyle("%" + "IPA" + "%", BeerStyle.IPA, null)
-                .size();
+        long expectedCount = beerRepository
+                .findAllByBeerNameIsLikeIgnoreCaseAndBeerStyle("%" + "IPA" + "%", BeerStyle.IPA, Pageable.unpaged())
+                .getTotalElements();
 
         mockMvc.perform(get(BeerController.BEER_BASE_URL)
                         .queryParam("beerName", "IPA")
                         .queryParam("beerStyle", BeerStyle.IPA.name())
                         .queryParam("showInventory", "true"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()", is(expectedCount)))
-                .andExpect(jsonPath("$.[0].quantityOnHand").value(IsNull.notNullValue()));
+                .andExpect(jsonPath("$.content.length()", is((int) expectedCount)))
+                .andExpect(jsonPath("$.content[0].quantityOnHand").value(IsNull.notNullValue()));
     }
 
     @Test
     void tesListBeersByStyleAndNameShowInventoryFalse() throws Exception {
-        int expectedCount = beerRepository
-                .findAllByBeerNameIsLikeIgnoreCaseAndBeerStyle("%" + "IPA" + "%", BeerStyle.IPA, null)
-                .size();
+        long expectedCount = beerRepository
+                .findAllByBeerNameIsLikeIgnoreCaseAndBeerStyle("%" + "IPA" + "%", BeerStyle.IPA, Pageable.unpaged())
+                .getTotalElements();
 
         mockMvc.perform(get(BeerController.BEER_BASE_URL)
                         .queryParam("beerName", "IPA")
                         .queryParam("beerStyle", BeerStyle.IPA.name())
                         .queryParam("showInventory", "false"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()", is(expectedCount)))
-                .andExpect(jsonPath("$.[0].quantityOnHand").value(IsNull.nullValue()));
+                .andExpect(jsonPath("$.content.length()", is((int) expectedCount)))
+                .andExpect(jsonPath("$.content[0].quantityOnHand").value(IsNull.nullValue()));
     }
 
     @Test
     void tesListBeersByStyleAndName() throws Exception {
-        int expectedCount = beerRepository
-                .findAllByBeerNameIsLikeIgnoreCaseAndBeerStyle("%" + "IPA" + "%", BeerStyle.IPA, null)
-                .size();
+        long expectedCount = beerRepository
+                .findAllByBeerNameIsLikeIgnoreCaseAndBeerStyle("%" + "IPA" + "%", BeerStyle.IPA, Pageable.unpaged())
+                .getTotalElements();
 
         mockMvc.perform(get(BeerController.BEER_BASE_URL)
                         .queryParam("beerName", "IPA")
                         .queryParam("beerStyle", BeerStyle.IPA.name()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()", is(expectedCount)));
+                .andExpect(jsonPath("$.content.length()", is((int) expectedCount)));
     }
 
     @Test
     void testListBeersQueryByBeerStyle() throws Exception {
         String query = BeerStyle.IPA.name();
-        int expected = beerRepository.findAllByBeerStyle(BeerStyle.valueOf(query), null)
-                .size();
+        long expected = beerRepository.findAllByBeerStyle(BeerStyle.valueOf(query), Pageable.unpaged())
+                .getTotalElements();
 
         var mvcResult = mockMvc.perform(get(BeerController.BEER_BASE_URL)
                         .queryParam("beerStyle", query))
@@ -125,8 +127,8 @@ class BeerControllerIT {
 
         String content = mvcResult.getResponse()
                 .getContentAsString();
-        // map response to list and assert size
-        var list = objectMapper.readValue(content, List.class);
+        // map response to list and assert size - response returns Page, so parse content array
+        var list = objectMapper.readTree(content).get("content");
         assertEquals(expected, list.size());
         // get the param
         String beerStyle = mvcResult.getRequest()
@@ -146,7 +148,7 @@ class BeerControllerIT {
         var request = mockMvc.perform(get(BeerController.BEER_BASE_URL)
                         .queryParam("beerName", randomName))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()", is(0)))
+                .andExpect(jsonPath("$.content.length()", is(0)))
                 .andReturn()
                 .getRequest();
         // get the param
@@ -158,8 +160,8 @@ class BeerControllerIT {
     @Test
     void testListBeersQueryByBeerName() throws Exception {
         String query = "IPA";
-        int expected = beerRepository.findAllByBeerNameIsLikeIgnoreCase("%" + query + "%", null)
-                .size();
+        long expected = beerRepository.findAllByBeerNameIsLikeIgnoreCase("%" + query + "%", Pageable.unpaged())
+                .getTotalElements();
 
         var mvcResult = mockMvc.perform(get(BeerController.BEER_BASE_URL)
                         .queryParam("beerName", query))
@@ -169,7 +171,7 @@ class BeerControllerIT {
         String content = mvcResult.getResponse()
                 .getContentAsString();
         // map response to list and assert size
-        var list = objectMapper.readValue(content, List.class);
+        var list = objectMapper.readTree(content).get("content");
         assertEquals(expected, list.size());
         // get the param
         String beerName = mvcResult.getRequest()
@@ -332,8 +334,8 @@ class BeerControllerIT {
 
     @Test
     void getBeers() {
-        List<BeerDTO> dtos = beerController.getBeers(null, null, false, 1, 25);
-        assertTrue(dtos.size() > 1000);
+        var page = beerController.getBeers(null, null, false, 1, 25);
+        assertTrue(page.getTotalElements() > 1000);
     }
 
     @Rollback
@@ -345,8 +347,8 @@ class BeerControllerIT {
 
         assertNotNull(beerController);
         assertNotNull(beerRepository);
-        List<BeerDTO> dtos = beerController.getBeers(null, null, false, 1, 25);
-        assertEquals(0, dtos.size());
+        var page = beerController.getBeers(null, null, false, 1, 25);
+        assertEquals(0, page.getTotalElements());
     }
 
     BeerDTO returnBeerDto() {
@@ -380,3 +382,4 @@ class BeerControllerIT {
                 .build();
     }
 }
+

@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.annotation.Rollback;
 
 import java.math.BigDecimal;
@@ -42,9 +43,9 @@ class BeerRepositoryTest {
 
     @Test
     void testGetBeersQueryByBeerName() {
-        var beers = beerRepository.findAllByBeerNameIsLikeIgnoreCase("%IPA%", null);
+        var beers = beerRepository.findAllByBeerNameIsLikeIgnoreCase("%IPA%", Pageable.unpaged());
         assertNotNull(beers);
-        assertEquals(336, beers.size());
+        assertEquals(336L, beers.getTotalElements());
 
     }
 
