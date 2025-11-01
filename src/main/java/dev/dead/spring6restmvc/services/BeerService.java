@@ -2,8 +2,8 @@ package dev.dead.spring6restmvc.services;
 
 import dev.dead.spring6restmvc.models.BeerDTO;
 import dev.dead.spring6restmvc.models.BeerStyle;
+import org.springframework.data.domain.Page;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -11,7 +11,7 @@ public interface BeerService {
 
     Optional<BeerDTO> getBeerById(UUID id);
 
-    List<BeerDTO> getBeers(String beerName, BeerStyle beerStyle, Boolean showInventory, Integer pageNumber,
+    Page<BeerDTO> getBeers(String beerName, BeerStyle beerStyle, Boolean showInventory, Integer pageNumber,
                            Integer pageSize);
 
     BeerDTO saveNewBeer(BeerDTO beerDTO);

@@ -6,13 +6,13 @@ import dev.dead.spring6restmvc.services.BeerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -74,7 +74,7 @@ public class BeerController {
     }
 
     @GetMapping(BEER_BASE_URL)
-    public List<BeerDTO> getBeers(@RequestParam(required = false) String beerName,
+    public Page<BeerDTO> getBeers(@RequestParam(required = false) String beerName,
                                   @RequestParam(required = false) BeerStyle beerStyle,
                                   @RequestParam(required = false) Boolean showInventory,
                                   @RequestParam(required = false) Integer pageNumber,
@@ -91,7 +91,7 @@ public class BeerController {
             log.debug(" -| Showing inventory: {} |- ", showInventory);
         }
         // ---
-        return beerService.getBeers(beerName, beerStyle, showInventory, 1, 25);
+        return beerService.getBeers(beerName, beerStyle, showInventory, pageNumber, pageSize);
     }
 
     @ExceptionHandler(NotFoundException.class)

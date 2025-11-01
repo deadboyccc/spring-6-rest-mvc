@@ -4,6 +4,8 @@ import dev.dead.spring6restmvc.models.BeerDTO;
 import dev.dead.spring6restmvc.models.BeerStyle;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -64,10 +66,10 @@ public class BeerServiceImpl implements BeerService {
     }
 
     @Override
-    public @NotNull List<BeerDTO> getBeers(String beerName, BeerStyle beerStyle, Boolean showInventory,
-                                           Integer pageNumber, Integer pageSize) {
+    public Page<BeerDTO> getBeers(String beerName, BeerStyle beerStyle, Boolean showInventory,
+                                  Integer pageNumber, Integer pageSize) {
         log.debug("getBeers() - Service");
-        return new ArrayList<>(beers.values());
+        return new PageImpl<>( new ArrayList<>(beers.values()));
 
     }
 

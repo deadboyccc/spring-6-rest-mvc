@@ -19,7 +19,6 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.math.BigDecimal;
@@ -73,7 +72,7 @@ class BeerControllerIT {
     @Test
     void tesListBeersByStyleAndNameShowInventoryTrue() throws Exception {
         int expectedCount = beerRepository
-                .findAllByBeerNameIsLikeIgnoreCaseAndBeerStyle("%" + "IPA" + "%", BeerStyle.IPA)
+                .findAllByBeerNameIsLikeIgnoreCaseAndBeerStyle("%" + "IPA" + "%", BeerStyle.IPA, null)
                 .size();
 
         mockMvc.perform(get(BeerController.BEER_BASE_URL)
@@ -88,7 +87,7 @@ class BeerControllerIT {
     @Test
     void tesListBeersByStyleAndNameShowInventoryFalse() throws Exception {
         int expectedCount = beerRepository
-                .findAllByBeerNameIsLikeIgnoreCaseAndBeerStyle("%" + "IPA" + "%", BeerStyle.IPA)
+                .findAllByBeerNameIsLikeIgnoreCaseAndBeerStyle("%" + "IPA" + "%", BeerStyle.IPA, null)
                 .size();
 
         mockMvc.perform(get(BeerController.BEER_BASE_URL)
@@ -103,7 +102,7 @@ class BeerControllerIT {
     @Test
     void tesListBeersByStyleAndName() throws Exception {
         int expectedCount = beerRepository
-                .findAllByBeerNameIsLikeIgnoreCaseAndBeerStyle("%" + "IPA" + "%", BeerStyle.IPA)
+                .findAllByBeerNameIsLikeIgnoreCaseAndBeerStyle("%" + "IPA" + "%", BeerStyle.IPA, null)
                 .size();
 
         mockMvc.perform(get(BeerController.BEER_BASE_URL)
@@ -116,7 +115,7 @@ class BeerControllerIT {
     @Test
     void testListBeersQueryByBeerStyle() throws Exception {
         String query = BeerStyle.IPA.name();
-        int expected = beerRepository.findAllByBeerStyle(BeerStyle.valueOf(query))
+        int expected = beerRepository.findAllByBeerStyle(BeerStyle.valueOf(query), null)
                 .size();
 
         var mvcResult = mockMvc.perform(get(BeerController.BEER_BASE_URL)
@@ -159,7 +158,7 @@ class BeerControllerIT {
     @Test
     void testListBeersQueryByBeerName() throws Exception {
         String query = "IPA";
-        int expected = beerRepository.findAllByBeerNameIsLikeIgnoreCase("%" + query + "%")
+        int expected = beerRepository.findAllByBeerNameIsLikeIgnoreCase("%" + query + "%", null)
                 .size();
 
         var mvcResult = mockMvc.perform(get(BeerController.BEER_BASE_URL)
