@@ -80,6 +80,7 @@ class BeerControllerIT {
         mockMvc.perform(get(BeerController.BEER_BASE_URL)
                         .queryParam("beerName", "IPA")
                         .queryParam("beerStyle", BeerStyle.IPA.name())
+                        .queryParam("pageSize", "1000")
                         .queryParam("showInventory", "true"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.length()", is((int) expectedCount)))
@@ -95,6 +96,7 @@ class BeerControllerIT {
         mockMvc.perform(get(BeerController.BEER_BASE_URL)
                         .queryParam("beerName", "IPA")
                         .queryParam("beerStyle", BeerStyle.IPA.name())
+                        .queryParam("pageSize", "1000")
                         .queryParam("showInventory", "false"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.length()", is((int) expectedCount)))
@@ -104,11 +106,12 @@ class BeerControllerIT {
     @Test
     void tesListBeersByStyleAndName() throws Exception {
         long expectedCount = beerRepository
-                .findAllByBeerNameIsLikeIgnoreCaseAndBeerStyle("%" + "IPA" + "%", BeerStyle.IPA, Pageable.unpaged())
+                .findAllByBeerNameIsLikeIgnoreCaseAndBeerStyle("%" + "IPA" + "%", BeerStyle.IPA, Pageable.ofSize(1000))
                 .getTotalElements();
 
         mockMvc.perform(get(BeerController.BEER_BASE_URL)
                         .queryParam("beerName", "IPA")
+                        .queryParam("pageSize", "1000")
                         .queryParam("beerStyle", BeerStyle.IPA.name()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.length()", is((int) expectedCount)));
@@ -116,28 +119,22 @@ class BeerControllerIT {
 
     @Test
     void testListBeersQueryByBeerStyle() throws Exception {
-        String query = BeerStyle.IPA.name();
-        long expected = beerRepository.findAllByBeerStyle(BeerStyle.valueOf(query), Pageable.unpaged())
-                .getTotalElements();
-
-        var mvcResult = mockMvc.perform(get(BeerController.BEER_BASE_URL)
-                        .queryParam("beerStyle", query))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        String content = mvcResult.getResponse()
-                .getContentAsString();
-        // map response to list and assert size - response returns Page, so parse content array
-        var list = objectMapper.readTree(content).get("content");
-        assertEquals(expected, list.size());
-        // get the param
-        String beerStyle = mvcResult.getRequest()
-                .getParameter("beerStyle");
-        log.debug("beerName: {}", beerStyle);
-        log.debug("query: {}", query);
-        log.debug("expected: {}", expected);
-        assertEquals(query, beerStyle);
-    }
+    BeerStyle testStyle = BeerStyle.IPA;
+    long expected = beerRepository.findAllByBeerStyle(testStyle, Pageable.unpaged())
+            .getTotalElements();
+    
+    var mvcResult = mockMvc.perform(get(BeerController.BEER_BASE_URL)
+                    .queryParam("beerStyle", testStyle.name())
+                    .queryParam("pageSize", "1000"))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andReturn();
+    
+    String content = mvcResult.getResponse().getContentAsString();
+    var list = objectMapper.readTree(content).get("content");
+    
+    assertEquals(expected, (long) list.size());
+}
 
     @Test
     void testListBeersQueryByBeerNameInvalidName() throws Exception {
@@ -164,6 +161,7 @@ class BeerControllerIT {
                 .getTotalElements();
 
         var mvcResult = mockMvc.perform(get(BeerController.BEER_BASE_URL)
+                        .queryParam("pageSize", "1000")
                         .queryParam("beerName", query))
                 .andExpect(status().isOk())
                 .andReturn();
