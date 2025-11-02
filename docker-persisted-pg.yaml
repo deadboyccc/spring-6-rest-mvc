@@ -1,0 +1,34 @@
+version: '3.8'
+
+# Minimal docker-compose file that brings up a single Postgres service
+# with a named persistent volume for application use.
+# It is intentionally small and focused on persistence.
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: spring6restmvc-postgres
+    environment:
+      POSTGRES_DB: spring6restmvc
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB} || exit 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+    driver: local
+    # Optionally you can set driver_opts here for specialized drivers
+    # driver_opts:
+    #   o: bind
+    #   type: none
+    #   device: /path/on/host
+
