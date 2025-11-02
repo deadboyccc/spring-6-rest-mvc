@@ -6,7 +6,7 @@ version: '3.8'
 
 services:
   postgres:
-    image: postgres:15-alpine
+    image: postgres:alpine
     container_name: spring6restmvc-postgres
     environment:
       POSTGRES_DB: spring6restmvc
