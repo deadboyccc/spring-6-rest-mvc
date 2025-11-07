@@ -59,6 +59,7 @@ public class BeerOrder {
 
     public void setCustomer(Customer customer) {
         this.customer = customer;
-        customer.getBeerOrders().add(this);
+        customer.getBeerOrders()
+                .add(this);
     }
 }

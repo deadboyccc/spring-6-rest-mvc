@@ -78,7 +78,7 @@ public class BeerController {
                                   @RequestParam(required = false) BeerStyle beerStyle,
                                   @RequestParam(required = false) Boolean showInventory,
                                   @RequestParam(required = false) Integer pageNumber,
-                                  @RequestParam(required = false)   Integer pageSize) {
+                                  @RequestParam(required = false) Integer pageSize) {
         log.debug("Get Beers - Controller");
         //---
         // debug log

@@ -60,5 +60,5 @@ public class Beer {
     @OneToMany(mappedBy = "beer")
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-private Set<BeerOrderLine> beerOrderLines;
+    private Set<BeerOrderLine> beerOrderLines;
 }

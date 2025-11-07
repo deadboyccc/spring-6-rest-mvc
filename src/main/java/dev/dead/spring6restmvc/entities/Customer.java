@@ -47,5 +47,5 @@ public class Customer {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @Builder.Default
-    private Set<BeerOrder> beerOrders=new HashSet<>();
+    private Set<BeerOrder> beerOrders = new HashSet<>();
 }

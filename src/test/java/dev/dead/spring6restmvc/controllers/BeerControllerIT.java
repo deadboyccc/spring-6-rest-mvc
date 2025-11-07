@@ -72,6 +72,7 @@ class BeerControllerIT {
                 .andExpect(jsonPath("$.content.length()", is(50)))
                 .andExpect(jsonPath("$.content[0].quantityOnHand").value(IsNull.notNullValue()));
     }
+
     @Test
     void tesListBeersByStyleAndNameShowInventoryTrue() throws Exception {
         long expectedCount = beerRepository
@@ -118,41 +119,42 @@ class BeerControllerIT {
                 .andExpect(jsonPath("$.content.length()", is((int) expectedCount)));
     }
 
-@Test
-void testListBeersQueryByBeerStyle() throws Exception {
-    BeerStyle testStyle = BeerStyle.IPA;
-    Page<Beer> beerPage = beerRepository.findAllByBeerStyle(testStyle, Pageable.unpaged());
-    long expected = beerPage.getTotalElements();
+    @Test
+    void testListBeersQueryByBeerStyle() throws Exception {
+        BeerStyle testStyle = BeerStyle.IPA;
+        Page<Beer> beerPage = beerRepository.findAllByBeerStyle(testStyle, Pageable.unpaged());
+        long expected = beerPage.getTotalElements();
 
-    // Ensure we have test data
-    assertTrue(expected > 0, "Test requires IPA beers in database");
+        // Ensure we have test data
+        assertTrue(expected > 0, "Test requires IPA beers in database");
 
-    var mvcResult = mockMvc.perform(get(BeerController.BEER_BASE_URL)
-                    .queryParam("beerStyle", testStyle.name())
-                    .queryParam("pageNumber", "0")  // Explicitly set page number
-                    .queryParam("pageSize", "1000"))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$.totalElements").value(expected))  // Verify total count
-            .andReturn();
+        var mvcResult = mockMvc.perform(get(BeerController.BEER_BASE_URL)
+                        .queryParam("beerStyle", testStyle.name())
+                        .queryParam("pageNumber", "0")  // Explicitly set page number
+                        .queryParam("pageSize", "1000"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.totalElements").value(expected))  // Verify total count
+                .andReturn();
 
-    String content = mvcResult.getResponse()
-            .getContentAsString();
-    var jsonNode = objectMapper.readTree(content);
-    var list = jsonNode.get("content");
+        String content = mvcResult.getResponse()
+                .getContentAsString();
+        var jsonNode = objectMapper.readTree(content);
+        var list = jsonNode.get("content");
 
-    // Verify the page content size matches what we got
-    assertEquals(expected, list.size(),
-            "Page content size should match expected or page size limit");
+        // Verify the page content size matches what we got
+        assertEquals(expected, list.size(),
+                "Page content size should match expected or page size limit");
 
-    // Verify all returned beers are actually IPAs
-    for (int i = 0; i < list.size(); i++) {
-        assertEquals(testStyle.name(), list.get(i)
-                        .get("beerStyle")
-                        .asText(),
-                "All returned beers should be of style " + testStyle);
+        // Verify all returned beers are actually IPAs
+        for (int i = 0; i < list.size(); i++) {
+            assertEquals(testStyle.name(), list.get(i)
+                            .get("beerStyle")
+                            .asText(),
+                    "All returned beers should be of style " + testStyle);
+        }
     }
-}
+
     @Test
     void testListBeersQueryByBeerNameInvalidName() throws Exception {
         String uuid = UUID.randomUUID()
@@ -186,7 +188,8 @@ void testListBeersQueryByBeerStyle() throws Exception {
         String content = mvcResult.getResponse()
                 .getContentAsString();
         // map response to list and assert size
-        var list = objectMapper.readTree(content).get("content");
+        var list = objectMapper.readTree(content)
+                .get("content");
         assertEquals(expected, list.size());
         // get the param
         String beerName = mvcResult.getRequest()

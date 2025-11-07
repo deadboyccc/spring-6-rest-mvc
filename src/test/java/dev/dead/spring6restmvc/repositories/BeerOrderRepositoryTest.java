@@ -30,22 +30,23 @@ class BeerOrderRepositoryTest {
     Beer testBeer;
 
 
-
     @BeforeEach
     void setUp() throws Exception {
-        testBeer=beerRepository.findAll().get(0);
-        testCustomer=customerRepository.findAll().get(0);
+        testBeer = beerRepository.findAll()
+                .get(0);
+        testCustomer = customerRepository.findAll()
+                .get(0);
     }
 
     @Test
-    void testBeerOrders()
-    {
+    void testBeerOrders() {
         log.debug("beers counts: `{}`", beerRepository.count());
         log.debug("customers counts: `{}`", customerRepository.count());
         log.debug("beer orders counts: `{}`", beerOrderRepository.count());
         log.debug("test beer: `{}`", testBeer);
         log.debug("test customer: `{}`", testCustomer);
     }
+
     @Transactional
     @Test
     void testRelationshipPersistance() {

@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@Import({ BeerCsvServiceImpl.class })
+@Import({BeerCsvServiceImpl.class})
 class BeerRepositoryTest {
     @Autowired
     BeerRepository beerRepository;

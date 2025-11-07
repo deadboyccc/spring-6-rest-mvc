@@ -24,8 +24,8 @@ import java.util.stream.Collectors;
 public class BeerServiceJPAImpl implements BeerService {
     private final BeerRepository beerRepository;
     private final BeerMapper beerMapper;
-    private final static int DEFAULT_PAGE=0;
-    private final static int DEFAULT_PAGE_SIZE=25;
+    private final static int DEFAULT_PAGE = 0;
+    private final static int DEFAULT_PAGE_SIZE = 25;
 
     @Override
     public Optional<BeerDTO> getBeerById(UUID id) {
@@ -41,11 +41,11 @@ public class BeerServiceJPAImpl implements BeerService {
         Page<Beer> beerPage;
         // query params
         if (StringUtils.hasText(beerName) && beerStyle == null) {
-            beerPage = listBeersByBeerName(beerName,pageRequest);
+            beerPage = listBeersByBeerName(beerName, pageRequest);
         } else if (!StringUtils.hasText(beerName) && beerStyle != null) {
-            beerPage = listBeersByBeerStyle(beerStyle,pageRequest);
+            beerPage = listBeersByBeerStyle(beerStyle, pageRequest);
         } else if (StringUtils.hasText(beerName) && beerStyle != null) {
-            beerPage = listBeersByBeerNameAndBeerStyle(beerName, beerStyle,pageRequest);
+            beerPage = listBeersByBeerNameAndBeerStyle(beerName, beerStyle, pageRequest);
 
         } else {
             beerPage = beerRepository.findAll(pageRequest);

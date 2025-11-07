@@ -69,7 +69,7 @@ public class BeerServiceImpl implements BeerService {
     public Page<BeerDTO> getBeers(String beerName, BeerStyle beerStyle, Boolean showInventory,
                                   Integer pageNumber, Integer pageSize) {
         log.debug("getBeers() - Service");
-        return new PageImpl<>( new ArrayList<>(beers.values()));
+        return new PageImpl<>(new ArrayList<>(beers.values()));
 
     }
 
