@@ -39,11 +39,9 @@ public class BeerOrder {
     @Column(name = "customer_ref")
     private String customerRef;
 
-    @ManyToOne
-    @JoinColumn(name = "customer_id", nullable = false)
+    @ManyToOne(optional = false)
     private Customer customer;
 
     @OneToMany(mappedBy = "beerOrder", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BeerOrderLine> beerOrderLines;
 }
-
