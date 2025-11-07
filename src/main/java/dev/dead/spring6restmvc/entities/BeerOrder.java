@@ -9,32 +9,41 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
-
 @Entity
+@Table(name = "beer_order")
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Customer {
+public class BeerOrder {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(columnDefinition = "uuid", updatable = false, nullable = false)
     private UUID id;
 
-    private String email;
     @Version
-    private Integer version;
-
-    @Column(name = "customer_name")
-    private String customerName;
+    private Long version;
 
     @CreationTimestamp
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
+    @Column(name = "created_date")
+    private LocalDateTime createdDate;
 
     @UpdateTimestamp
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+    @Column(name = "last_modified_date")
+    private LocalDateTime lastModifiedDate;
+
+    @Column(name = "customer_ref")
+    private String customerRef;
+
+    @ManyToOne
+    @JoinColumn(name = "customer_id", nullable = false)
+    private Customer customer;
+
+    @OneToMany(mappedBy = "beerOrder", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BeerOrderLine> beerOrderLines;
 }
+

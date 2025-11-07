@@ -30,10 +30,12 @@ public class Beer {
     @NotNull
     @NotBlank
     @Size(max = 50) // validation before db call ( efficient )
-    @Column(length = 50) // db validation ( less efficient if error bubbled )
+    @Column(name = "beer_name", length = 50) // db validation ( less efficient if error bubbled )
     private String beerName;
 
     @NotNull
+    @Enumerated(EnumType.ORDINAL)
+    @Column(name = "beer_style")
     private BeerStyle beerStyle;
 
     @NotNull
@@ -41,15 +43,18 @@ public class Beer {
     @Size(max = 255)
     private String upc;
 
+    @Column(name = "quantity_on_hand")
     private Integer quantityOnHand;
 
     @NotNull
     private BigDecimal price;
 
     @CreationTimestamp
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
 }
