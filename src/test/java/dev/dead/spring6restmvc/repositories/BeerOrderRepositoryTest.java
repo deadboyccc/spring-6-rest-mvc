@@ -3,7 +3,9 @@ package dev.dead.spring6restmvc.repositories;
 import dev.dead.spring6restmvc.bootstrap.BootstrapData;
 import dev.dead.spring6restmvc.bootstrap.BootstrapDataTest;
 import dev.dead.spring6restmvc.entities.Beer;
+import dev.dead.spring6restmvc.entities.BeerOrder;
 import dev.dead.spring6restmvc.entities.Customer;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -43,5 +45,15 @@ class BeerOrderRepositoryTest {
         log.debug("beer orders counts: `{}`", beerOrderRepository.count());
         log.debug("test beer: `{}`", testBeer);
         log.debug("test customer: `{}`", testCustomer);
+    }
+    @Transactional
+    @Test
+    void testRelationshipPersistance() {
+        BeerOrder beerOrder = BeerOrder.builder()
+                .customerRef("Test customer reference")
+                .customer(testCustomer)
+                .build();
+        BeerOrder savedBeerOrder = beerOrderRepository.saveAndFlush(beerOrder);
+        log.debug("saved beer order: `{}`", savedBeerOrder);
     }
 }
