@@ -17,9 +17,20 @@ import java.util.UUID;
 @Table(name = "beer_order")
 @Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
 public class BeerOrder {
+
+    public BeerOrder(UUID id, Long version, LocalDateTime createdDate, LocalDateTime lastModifiedDate,
+                     String customerRef,
+                     Customer customer, Set<BeerOrderLine> beerOrderLines) {
+        this.id = id;
+        this.version = version;
+        this.createdDate = createdDate;
+        this.lastModifiedDate = lastModifiedDate;
+        this.customerRef = customerRef;
+        this.setCustomer(customer);
+        this.beerOrderLines = beerOrderLines;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -45,4 +56,9 @@ public class BeerOrder {
 
     @OneToMany(mappedBy = "beerOrder", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<BeerOrderLine> beerOrderLines;
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+        customer.getBeerOrders().add(this);
+    }
 }

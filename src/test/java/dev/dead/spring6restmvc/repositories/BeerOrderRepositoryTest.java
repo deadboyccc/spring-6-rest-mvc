@@ -53,7 +53,7 @@ class BeerOrderRepositoryTest {
                 .customerRef("Test customer reference")
                 .customer(testCustomer)
                 .build();
-        BeerOrder savedBeerOrder = beerOrderRepository.saveAndFlush(beerOrder);
+        BeerOrder savedBeerOrder = beerOrderRepository.save(beerOrder);
         log.debug("saved beer order: `{}`", savedBeerOrder);
     }
 }
