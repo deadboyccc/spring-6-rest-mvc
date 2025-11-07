@@ -12,6 +12,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 
@@ -44,5 +45,5 @@ public class Customer {
     @OneToMany(mappedBy = "customer")
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private List<BeerOrder> beerOrders;
+    private Set<BeerOrder> beerOrders;
 }

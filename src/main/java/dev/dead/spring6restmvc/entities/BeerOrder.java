@@ -10,6 +10,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -43,5 +44,5 @@ public class BeerOrder {
     private Customer customer;
 
     @OneToMany(mappedBy = "beerOrder", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<BeerOrderLine> beerOrderLines;
+    private Set<BeerOrderLine> beerOrderLines;
 }
