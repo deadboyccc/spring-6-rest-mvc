@@ -58,5 +58,7 @@ public class Beer {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
     @OneToMany(mappedBy = "beer")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
 private Set<BeerOrderLine> beerOrderLines;
 }
