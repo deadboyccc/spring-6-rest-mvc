@@ -44,8 +44,8 @@ class CategoryRepositoryTest {
         testBeer.addCategory(savedCategory);
         Beer savedBeer = beerRepository.save(testBeer);
         log.debug("saved beer: `{}`", savedBeer);
-        assertEquals(savedBeer.getCategories()
-                .size(), 1);
+        assertEquals(1, savedBeer.getCategories()
+                .size());
     }
 
 }
