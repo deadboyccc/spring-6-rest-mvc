@@ -60,6 +60,8 @@ public class Beer {
     private LocalDateTime updatedAt;
     @Builder.Default
     @ManyToMany
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @JoinTable(name = "beer_category",
             joinColumns = @JoinColumn(name = "beer_id"),
             inverseJoinColumns = @JoinColumn(name = "category_id"))
@@ -69,4 +71,16 @@ public class Beer {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Set<BeerOrderLine> beerOrderLines;
+
+    public void addCategory(Category category) {
+        this.categories.add(category);
+        category.getBeers()
+                .add(this);
+    }
+
+    public void removeCategory(Category category) {
+        this.categories.remove(category);
+        category.getBeers()
+                .remove(this);
+    }
 }
