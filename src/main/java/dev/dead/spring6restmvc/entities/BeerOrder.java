@@ -20,17 +20,8 @@ import java.util.UUID;
 @NoArgsConstructor
 public class BeerOrder {
 
-    public BeerOrder(UUID id, Long version, LocalDateTime createdDate, LocalDateTime lastModifiedDate,
-                     String customerRef,
-                     Customer customer, Set<BeerOrderLine> beerOrderLines) {
-        this.id = id;
-        this.version = version;
-        this.createdDate = createdDate;
-        this.lastModifiedDate = lastModifiedDate;
-        this.customerRef = customerRef;
-        this.setCustomer(customer);
-        this.beerOrderLines = beerOrderLines;
-    }
+    @OneToOne(mappedBy = "beerOrder", cascade = CascadeType.ALL, orphanRemoval = true)
+    private BeerOrderShipment beerOrderShipment;
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -56,6 +47,21 @@ public class BeerOrder {
 
     @OneToMany(mappedBy = "beerOrder", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<BeerOrderLine> beerOrderLines;
+
+    public BeerOrder(UUID id, Long version, LocalDateTime createdDate, LocalDateTime lastModifiedDate,
+                     String customerRef,
+                     Customer customer, Set<BeerOrderLine> beerOrderLines,
+                     BeerOrderShipment beerOrderShipment) {
+        this.id = id;
+        this.version = version;
+        this.createdDate = createdDate;
+        this.lastModifiedDate = lastModifiedDate;
+        this.customerRef = customerRef;
+        this.setCustomer(customer);
+        this.beerOrderLines = beerOrderLines;
+        this.beerOrderShipment = beerOrderShipment;
+
+    }
 
     public void setCustomer(Customer customer) {
         this.customer = customer;
