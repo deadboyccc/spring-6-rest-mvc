@@ -1,14 +1,12 @@
 package dev.dead.spring6restmvc.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -18,11 +16,13 @@ import java.util.UUID;
 @Data
 @Builder
 @NoArgsConstructor
-@AllArgsConstructor
 public class BeerOrder {
-
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @OneToOne(mappedBy = "beerOrder", cascade = CascadeType.ALL, orphanRemoval = true)
     private BeerOrderShipment beerOrderShipment;
+    @ManyToOne(optional = false, cascade = CascadeType.PERSIST)
+    private Customer customer;
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -42,17 +42,15 @@ public class BeerOrder {
 
     @Column(name = "customer_ref")
     private String customerRef;
-
-    @ManyToOne(optional = false)
-    private Customer customer;
-
+    @Builder.Default
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @OneToMany(mappedBy = "beerOrder", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<BeerOrderLine> beerOrderLines;
-
-    public BeerOrder(UUID id, Long version, LocalDateTime createdDate, LocalDateTime lastModifiedDate,
-                     String customerRef,
-                     Customer customer, Set<BeerOrderLine> beerOrderLines,
-                     BeerOrderShipment beerOrderShipment) {
+    private Set<BeerOrderLine> beerOrderLines = new HashSet<>();
+    public BeerOrder(BeerOrderShipment beerOrderShipment, UUID id, Long version, LocalDateTime createdDate,
+                     LocalDateTime lastModifiedDate, String customerRef, Customer customer,
+                     Set<BeerOrderLine> beerOrderLines) {
+        this.setBeerOrderShipment(beerOrderShipment);
         this.id = id;
         this.version = version;
         this.createdDate = createdDate;
@@ -60,10 +58,12 @@ public class BeerOrder {
         this.customerRef = customerRef;
         this.setCustomer(customer);
         this.beerOrderLines = beerOrderLines;
-        this.beerOrderShipment = beerOrderShipment;
-
     }
 
+    public void setBeerOrderShipment(BeerOrderShipment beerOrderShipment) {
+        this.beerOrderShipment = beerOrderShipment;
+        beerOrderShipment.setBeerOrder(this);
+    }
     public void setCustomer(Customer customer) {
         this.customer = customer;
         customer.getBeerOrders()

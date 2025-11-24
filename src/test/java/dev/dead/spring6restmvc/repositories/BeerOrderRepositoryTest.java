@@ -4,6 +4,7 @@ import dev.dead.spring6restmvc.bootstrap.BootstrapData;
 import dev.dead.spring6restmvc.bootstrap.BootstrapDataTest;
 import dev.dead.spring6restmvc.entities.Beer;
 import dev.dead.spring6restmvc.entities.BeerOrder;
+import dev.dead.spring6restmvc.entities.BeerOrderShipment;
 import dev.dead.spring6restmvc.entities.Customer;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -53,6 +54,11 @@ class BeerOrderRepositoryTest {
         BeerOrder beerOrder = BeerOrder.builder()
                 .customerRef("Test customer reference")
                 .customer(testCustomer)
+                .beerOrderShipment(
+                        BeerOrderShipment.builder()
+                                .trackingNumber("234ii")
+                                .build()
+                )
                 .build();
         BeerOrder savedBeerOrder = beerOrderRepository.save(beerOrder);
         log.debug("saved beer order: `{}`", savedBeerOrder);
