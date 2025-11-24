@@ -18,6 +18,7 @@ import java.util.UUID;
 @Data
 @Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class BeerOrder {
 
     @OneToOne(mappedBy = "beerOrder", cascade = CascadeType.ALL, orphanRemoval = true)
