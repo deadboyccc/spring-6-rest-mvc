@@ -35,10 +35,14 @@ public class BeerOrderShipment {
 
     @CreationTimestamp
     @Column(name = "created_date")
+    @ToString.Include
+    @EqualsAndHashCode.Include
     private LocalDateTime createdDate;
 
     @UpdateTimestamp
     @Column(name = "last_modified_date")
+    @ToString.Include
+    @EqualsAndHashCode.Include
     private LocalDateTime lastModifiedDate;
 
     @Column(name = "tracking_number")
@@ -46,5 +50,7 @@ public class BeerOrderShipment {
 
     @OneToOne(optional = false)
     @JoinColumn(name = "beer_order_id", nullable = false)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private BeerOrder beerOrder;
 }

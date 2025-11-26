@@ -35,10 +35,14 @@ public class BeerOrderLine {
 
     @CreationTimestamp
     @Column(name = "created_date")
+    @ToString.Include
+    @EqualsAndHashCode.Include
     private LocalDateTime createdDate;
 
     @UpdateTimestamp
     @Column(name = "last_modified_date")
+    @ToString.Include
+    @EqualsAndHashCode.Include
     private LocalDateTime lastModifiedDate;
 
     @Column(name = "order_quantity")
@@ -49,9 +53,13 @@ public class BeerOrderLine {
 
     @ManyToOne
     @JoinColumn(name = "beer_order_id", nullable = false)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private BeerOrder beerOrder;
 
     @ManyToOne
     @JoinColumn(name = "beer_id", nullable = false)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Beer beer;
 }

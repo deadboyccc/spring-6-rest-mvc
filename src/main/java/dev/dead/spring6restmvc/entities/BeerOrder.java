@@ -38,10 +38,14 @@ public class BeerOrder {
 
     @CreationTimestamp
     @Column(name = "created_date")
+    @ToString.Include
+    @EqualsAndHashCode.Include
     private LocalDateTime createdDate;
 
     @UpdateTimestamp
     @Column(name = "last_modified_date")
+    @ToString.Include
+    @EqualsAndHashCode.Include
     private LocalDateTime lastModifiedDate;
 
     @Column(name = "customer_ref")

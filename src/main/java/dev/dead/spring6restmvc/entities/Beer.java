@@ -57,10 +57,14 @@ public class Beer {
 
     @CreationTimestamp
     @Column(name = "created_at")
+    @ToString.Include
+    @EqualsAndHashCode.Include
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
     @Column(name = "updated_at")
+    @ToString.Include
+    @EqualsAndHashCode.Include
     private LocalDateTime updatedAt;
     @Builder.Default
     @ManyToMany

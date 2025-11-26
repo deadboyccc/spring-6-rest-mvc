@@ -34,10 +34,14 @@ public class Category {
 
     @CreationTimestamp
     @Column(name = "created_date")
+    @ToString.Include
+    @EqualsAndHashCode.Include
     private LocalDateTime createdDate;
 
     @UpdateTimestamp
     @Column(name = "last_modified_date")
+    @ToString.Include
+    @EqualsAndHashCode.Include
     private LocalDateTime lastModifiedDate;
 
     @Builder.Default
