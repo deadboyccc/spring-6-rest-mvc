@@ -1,19 +1,17 @@
-# ---- Runtime image only (fast, small, secure) ----
 FROM eclipse-temurin:17-jre-alpine
 
-# Create non-root user (security, no behavior change)
+ENV JAVA_OPTS="-XX:+UseContainerSupport"
+
 RUN addgroup -S spring && adduser -S spring -G spring
 
 WORKDIR /app
 
-# Copy the built JAR
-COPY target/*.jar app.jar
+COPY target/*.jar /app/app.jar
 
-# Use non-root user
+RUN chown -R spring:spring /app
+
 USER spring:spring
 
-# Default Spring Boot port (documentation only)
 EXPOSE 8080
 
-# Run the application
-ENTRYPOINT ["java", "-jar", "/app/app.jar"]
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar /app/app.jar"]
