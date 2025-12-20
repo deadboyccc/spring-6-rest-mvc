@@ -25,6 +25,21 @@ jobs:
           - language: java-kotlin
             build-mode: autobuild
 
+    services:
+      postgres:
+        image: postgres:16-alpine
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_DB: spring6restmvc
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: 123
+        options: >-
+          --health-cmd="pg_isready -U postgres -d spring6restmvc"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
