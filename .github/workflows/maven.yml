@@ -10,6 +10,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [17, 21]
+
     services:
       postgres:
         image: postgres:16-alpine
@@ -28,32 +33,61 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up JDK 17
+      - name: Set up JDK ${{ matrix.java }}
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
+          java-version: ${{ matrix.java }}
           distribution: temurin
           cache: maven
 
-      # ---------- TEST PHASE (ONCE) ----------
+      # ---------- TESTS ----------
       - name: Run tests
+        continue-on-error: ${{ matrix.java == '21' }}
         env:
           MAVEN_OPTS: -Dmaven.repo.local=$HOME/.m2/repository
         run: mvn -B -ntp test
 
-      # ---------- PACKAGE PHASE (NO TESTS) ----------
+      # ---------- PACKAGE (JAVA 17 ONLY) ----------
       - name: Build JAR
+        if: matrix.java == '17'
         env:
           MAVEN_OPTS: -Dmaven.repo.local=$HOME/.m2/repository
         run: |
           mvn -B -ntp -DskipTests package
           test -f target/*.jar
 
-      # ---------- ARTIFACT ----------
+      # ---------- ARTIFACT (JAVA 17 ONLY, PUSH ONLY) ----------
       - name: Upload JAR artifact
-        if: github.event_name == 'push'
+        if: github.event_name == 'push' && matrix.java == '17'
         uses: actions/upload-artifact@v4
         with:
           name: spring-6-rest-mvc-jar
           path: target/*.jar
+          retention-days: 7
+
+      # ---------- DOCKER (JAVA 17 ONLY) ----------
+      - name: Set up Docker Buildx
+        if: github.event_name == 'push' && matrix.java == '17'
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        if: github.event_name == 'push' && matrix.java == '17'
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          load: true
+          tags: spring-6-rest-mvc:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Export Docker image
+        if: github.event_name == 'push' && matrix.java == '17'
+        run: docker save spring-6-rest-mvc:ci -o spring-6-rest-mvc.tar
+
+      - name: Upload Docker image artifact
+        if: github.event_name == 'push' && matrix.java == '17'
+        uses: actions/upload-artifact@v4
+        with:
+          name: spring-6-rest-mvc-docker-image
+          path: spring-6-rest-mvc.tar
           retention-days: 7
