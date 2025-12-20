@@ -32,20 +32,28 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: '17'
-          distribution: 'temurin'
+          distribution: temurin
           cache: maven
 
-      - name: Build with Maven
+      # ---------- TEST PHASE (ONCE) ----------
+      - name: Run tests
+        env:
+          MAVEN_OPTS: -Dmaven.repo.local=$HOME/.m2/repository
+        run: mvn -B -ntp test
+
+      # ---------- PACKAGE PHASE (NO TESTS) ----------
+      - name: Build JAR
         env:
           MAVEN_OPTS: -Dmaven.repo.local=$HOME/.m2/repository
         run: |
-          mvn -B -ntp -Dstyle.color=always package --file pom.xml
+          mvn -B -ntp -DskipTests package
           test -f target/*.jar
 
+      # ---------- ARTIFACT ----------
       - name: Upload JAR artifact
         if: github.event_name == 'push'
         uses: actions/upload-artifact@v4
         with:
           name: spring-6-rest-mvc-jar
-          path: target/*jar
+          path: target/*.jar
           retention-days: 7
