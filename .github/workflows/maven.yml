@@ -12,7 +12,7 @@ jobs:
 
     services:
       postgres:
-        image: postgres:16
+        image: postgres:16-alpine
         ports:
           - 5432:5432
         env:
@@ -35,12 +35,17 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: Wait for PostgreSQL
-        run: |
-          until pg_isready -h localhost -p 5432 -U postgres; do
-            echo "Waiting for postgres..."
-            sleep 2
-          done
-
       - name: Build with Maven
-        run: mvn -B package --file pom.xml
+        env:
+          MAVEN_OPTS: -Dmaven.repo.local=$HOME/.m2/repository
+        run: |
+          mvn -B -ntp -Dstyle.color=always package --file pom.xml
+          test -f target/*.jar
+
+      - name: Upload JAR artifact
+        if: github.event_name == 'push'
+        uses: actions/upload-artifact@v4
+        with:
+          name: spring-6-rest-mvc-jar
+          path: target/*jar
+          retention-days: 7
