@@ -31,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -56,12 +57,14 @@ class BeerControllerIT {
     @BeforeEach
     void setUp() {
         mockMvc = MockMvcBuilders.webAppContextSetup(wac)
+                .apply(springSecurity())
                 .build();
     }
 
     @Test
     void tesListBeersByStyleAndNameShowInventoryTruePage1() throws Exception {
         mockMvc.perform(get(BeerController.BEER_BASE_URL)
+                        .with(BeerControllerTest.postProcessor)
                         .queryParam("beerName", "IPA")
                         .queryParam("beerStyle", BeerStyle.IPA.name())
                         .queryParam("showInventory", "true")
@@ -80,6 +83,7 @@ class BeerControllerIT {
                 .getTotalElements();
 
         mockMvc.perform(get(BeerController.BEER_BASE_URL)
+                        .with(BeerControllerTest.postProcessor)
                         .queryParam("beerName", "IPA")
                         .queryParam("beerStyle", BeerStyle.IPA.name())
                         .queryParam("pageSize", "1000")
@@ -96,6 +100,7 @@ class BeerControllerIT {
                 .getTotalElements();
 
         mockMvc.perform(get(BeerController.BEER_BASE_URL)
+                        .with(BeerControllerTest.postProcessor)
                         .queryParam("beerName", "IPA")
                         .queryParam("beerStyle", BeerStyle.IPA.name())
                         .queryParam("pageSize", "1000")
@@ -112,6 +117,7 @@ class BeerControllerIT {
                 .getTotalElements();
 
         mockMvc.perform(get(BeerController.BEER_BASE_URL)
+                        .with(BeerControllerTest.postProcessor)
                         .queryParam("beerName", "IPA")
                         .queryParam("pageSize", "1000")
                         .queryParam("beerStyle", BeerStyle.IPA.name()))
@@ -129,6 +135,7 @@ class BeerControllerIT {
         assertTrue(expected > 0, "Test requires IPA beers in database");
 
         var mvcResult = mockMvc.perform(get(BeerController.BEER_BASE_URL)
+                        .with(BeerControllerTest.postProcessor)
                         .queryParam("beerStyle", testStyle.name())
                         .queryParam("pageNumber", "0")  // Explicitly set page number
                         .queryParam("pageSize", "1000"))
@@ -162,6 +169,7 @@ class BeerControllerIT {
         String randomName = UUID.randomUUID()
                 .toString();
         var request = mockMvc.perform(get(BeerController.BEER_BASE_URL)
+                        .with(BeerControllerTest.postProcessor)
                         .queryParam("beerName", randomName))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.length()", is(0)))
@@ -180,6 +188,7 @@ class BeerControllerIT {
                 .getTotalElements();
 
         var mvcResult = mockMvc.perform(get(BeerController.BEER_BASE_URL)
+                        .with(BeerControllerTest.postProcessor)
                         .queryParam("pageSize", "1000")
                         .queryParam("beerName", query))
                 .andExpect(status().isOk())
@@ -213,6 +222,7 @@ class BeerControllerIT {
                 .build();
 
         mockMvc.perform(patch(BeerController.BEER_ID_URL, beer.getId())
+                        .with(BeerControllerTest.postProcessor)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(beerDto)))
