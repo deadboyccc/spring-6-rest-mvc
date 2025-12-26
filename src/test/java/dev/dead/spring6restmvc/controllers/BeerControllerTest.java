@@ -27,6 +27,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
@@ -37,13 +38,13 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
 @Slf4j
 @WebMvcTest(BeerController.class)
-@Import(SpringSecConfig.class)
 class BeerControllerTest {
 
     @Autowired
@@ -57,7 +58,15 @@ class BeerControllerTest {
     ArgumentCaptor<UUID> uuidArgumentCaptor;
     @Captor
     ArgumentCaptor<BeerDTO> beerArgumentCaptor;
-    public static RequestPostProcessor postProcessor = httpBasic("user", "password");
+    public static RequestPostProcessor postProcessor =
+            jwt().jwt((jwt) -> jwt.claims(claims -> {
+                        claims.put("scopes",
+                                "messages:read");
+                        claims.put("scopes", "messages:write");
+                    })
+                    .subject("oidc-client")
+                    .notBefore(Instant.now()
+                            .minusSeconds(80)));
 
     @BeforeEach
     void setUp() {
@@ -331,7 +340,6 @@ class BeerControllerTest {
     void getBeersTest() throws Exception {
         assertNotNull(beerServiceImpl);
         given(beerService.getBeers(any(), any(), any(), any(), any())).willReturn(beerServiceImpl.getBeers(null, null, false, 1, 25));
-        postProcessor = SecurityMockMvcRequestPostProcessors.httpBasic("user", "password");
         mockMvc.perform(get(BeerController.BEER_BASE_URL).accept(MediaType.APPLICATION_JSON)
                         .with(
                                 postProcessor

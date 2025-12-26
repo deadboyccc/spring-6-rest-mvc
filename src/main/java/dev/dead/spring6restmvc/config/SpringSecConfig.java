@@ -18,10 +18,11 @@ public class SpringSecConfig {
                         .anyRequest()
                         .authenticated()
                 )
-                .httpBasic(Customizer.withDefaults())
-                .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/api/**")
-                );
+
+                .oauth2ResourceServer(httpSecurityOAuth2ResourceServerConfigurer ->
+                        httpSecurityOAuth2ResourceServerConfigurer.jwt(Customizer.withDefaults()))
+                .csrf(csrf ->
+                        csrf.ignoringRequestMatchers("/api/**"));
 
         return http.build();
     }
