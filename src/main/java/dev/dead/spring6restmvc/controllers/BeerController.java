@@ -6,6 +6,7 @@ import dev.dead.spring6restmvc.services.BeerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -101,6 +102,7 @@ public class BeerController {
                 .build();
     }
 
+    @Cacheable(cacheNames = "beerCache", key = "#beerId", unless = "#result == null")
     @GetMapping(BEER_ID_URL)
     public BeerDTO getBeerById(@PathVariable("beerId") @NotNull UUID beerId) {
         log.debug("Get Beer by Id - in Controller. Id: {}", beerId);
