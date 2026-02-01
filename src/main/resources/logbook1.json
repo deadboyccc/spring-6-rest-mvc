@@ -1,0 +1,347 @@
+{
+  "origin": "local",
+  "type": "response",
+  "correlation": "aaa141c595a25492",
+  "duration": 48,
+  "protocol": "HTTP/1.1",
+  "status": 200,
+  "headers": {
+    "Cache-Control": [
+      "no-cache, no-store, max-age=0, must-revalidate"
+    ],
+    "Connection": [
+      "keep-alive"
+    ],
+    "Content-Type": [
+      "application/json"
+    ],
+    "Date": [
+      "Sun, 01 Feb 2026 04:02:31 GMT"
+    ],
+    "Expires": [
+      "0"
+    ],
+    "Keep-Alive": [
+      "timeout=60"
+    ],
+    "Pragma": [
+      "no-cache"
+    ],
+    "Transfer-Encoding": [
+      "chunked"
+    ],
+    "X-Content-Type-Options": [
+      "nosniff"
+    ],
+    "X-Frame-Options": [
+      "DENY"
+    ],
+    "X-XSS-Protection": [
+      "0"
+    ]
+  },
+  "body": {
+    "content": [
+      {
+        "id": "666cc180-a9f2-40d5-9386-dbdf07623497",
+        "version": 0,
+        "beerName": "Regional Ring Of Fire",
+        "beerStyle": "SAISON",
+        "upc": "12",
+        "quantityOnHand": 12,
+        "price": 10.0,
+        "createdAt": "2025-11-10T05:12:38.685643",
+        "updatedAt": "2025-11-10T05:12:38.685656"
+      },
+      {
+        "id": "2268a599-2bd9-43b2-9519-bd545b0d5dc7",
+        "version": 0,
+        "beerName": "Garce SelÃ©",
+        "beerStyle": "SAISON",
+        "upc": "13",
+        "quantityOnHand": 13,
+        "price": 10.0,
+        "createdAt": "2025-11-10T05:12:38.688042",
+        "updatedAt": "2025-11-10T05:12:38.688052"
+      },
+      {
+        "id": "fa799bc7-918c-4545-ab57-66181970e52d",
+        "version": 0,
+        "beerName": "Troll Destroyer",
+        "beerStyle": "IPA",
+        "upc": "14",
+        "quantityOnHand": 14,
+        "price": 10.0,
+        "createdAt": "2025-11-10T05:12:38.689769",
+        "updatedAt": "2025-11-10T05:12:38.689777"
+      },
+      {
+        "id": "f3e28aae-1d07-4ca6-ba00-bc3e385b0737",
+        "version": 0,
+        "beerName": "Bitter Bitch",
+        "beerStyle": "ALE",
+        "upc": "15",
+        "quantityOnHand": 15,
+        "price": 10.0,
+        "createdAt": "2025-11-10T05:12:38.691103",
+        "updatedAt": "2025-11-10T05:12:38.69111"
+      },
+      {
+        "id": "7517e698-f2b7-4c36-b782-d2b1513c5799",
+        "version": 0,
+        "beerName": "Ginja Ninja",
+        "beerStyle": "PILSNER",
+        "upc": "16",
+        "quantityOnHand": 16,
+        "price": 10.0,
+        "createdAt": "2025-11-10T05:12:38.692489",
+        "updatedAt": "2025-11-10T05:12:38.692497"
+      },
+      {
+        "id": "580b3546-b947-4092-a343-f98ce207432b",
+        "version": 0,
+        "beerName": "Cherried Away",
+        "beerStyle": "PILSNER",
+        "upc": "17",
+        "quantityOnHand": 17,
+        "price": 10.0,
+        "createdAt": "2025-11-10T05:12:38.695412",
+        "updatedAt": "2025-11-10T05:12:38.695446"
+      },
+      {
+        "id": "4be6f4a3-4303-4090-a993-406f532857c3",
+        "version": 0,
+        "beerName": "Rhubarbarian",
+        "beerStyle": "PILSNER",
+        "upc": "18",
+        "quantityOnHand": 18,
+        "price": 10.0,
+        "createdAt": "2025-11-10T05:12:38.700392",
+        "updatedAt": "2025-11-10T05:12:38.700413"
+      },
+      {
+        "id": "c2a89461-45c1-4a08-9fa6-91705d5336bf",
+        "version": 0,
+        "beerName": "BrightCider",
+        "beerStyle": "PILSNER",
+        "upc": "19",
+        "quantityOnHand": 19,
+        "price": 10.0,
+        "createdAt": "2025-11-10T05:12:38.704076",
+        "updatedAt": "2025-11-10T05:12:38.704093"
+      },
+      {
+        "id": "c3111ddb-ab97-4149-9f54-606f75216e23",
+        "version": 0,
+        "beerName": "He Said Baltic-Style Porter",
+        "beerStyle": "PILSNER",
+        "upc": "20",
+        "quantityOnHand": 20,
+        "price": 10.0,
+        "createdAt": "2025-11-10T05:12:38.707444",
+        "updatedAt": "2025-11-10T05:12:38.707463"
+      },
+      {
+        "id": "e3eaeec6-bd95-4c1d-8e60-e85dde8d64d3",
+        "version": 0,
+        "beerName": "He Said Belgian-Style Tripel",
+        "beerStyle": "PILSNER",
+        "upc": "21",
+        "quantityOnHand": 21,
+        "price": 10.0,
+        "createdAt": "2025-11-10T05:12:38.713288",
+        "updatedAt": "2025-11-10T05:12:38.713299"
+      },
+      {
+        "id": "e6489330-e331-45f0-a490-1d78267c9451",
+        "version": 0,
+        "beerName": "Lower De Boom",
+        "beerStyle": "PILSNER",
+        "upc": "22",
+        "quantityOnHand": 22,
+        "price": 10.0,
+        "createdAt": "2025-11-10T05:12:38.714867",
+        "updatedAt": "2025-11-10T05:12:38.714877"
+      },
+      {
+        "id": "a2693da3-c439-4dc1-99ca-0d4b87ffad6e",
+        "version": 0,
+        "beerName": "Fireside Chat",
+        "beerStyle": "WHEAT",
+        "upc": "23",
+        "quantityOnHand": 23,
+        "price": 10.0,
+        "createdAt": "2025-11-10T05:12:38.715934",
+        "updatedAt": "2025-11-10T05:12:38.715939"
+      },
+      {
+        "id": "1b424e5d-87f5-4c1f-8975-a7239ba0be3d",
+        "version": 0,
+        "beerName": "Marooned On Hog Island",
+        "beerStyle": "STOUT",
+        "upc": "24",
+        "quantityOnHand": 24,
+        "price": 10.0,
+        "createdAt": "2025-11-10T05:12:38.716995",
+        "updatedAt": "2025-11-10T05:12:38.717"
+      },
+      {
+        "id": "0bea4ea6-ff30-4a6a-af9d-834fc55b543b",
+        "version": 0,
+        "beerName": "Bitter American",
+        "beerStyle": "ALE",
+        "upc": "25",
+        "quantityOnHand": 25,
+        "price": 10.0,
+        "createdAt": "2025-11-10T05:12:38.717864",
+        "updatedAt": "2025-11-10T05:12:38.717868"
+      },
+      {
+        "id": "08d9daf9-a60a-4931-92db-aeb89b9b5612",
+        "version": 0,
+        "beerName": "Hell or High Watermelon Wheat (2009)",
+        "beerStyle": "WHEAT",
+        "upc": "26",
+        "quantityOnHand": 26,
+        "price": 10.0,
+        "createdAt": "2025-11-10T05:12:38.718659",
+        "updatedAt": "2025-11-10T05:12:38.718664"
+      },
+      {
+        "id": "82f0d64c-4e34-4494-8a00-cf560c94b199",
+        "version": 0,
+        "beerName": "Hell or High Watermelon Wheat (2009)",
+        "beerStyle": "WHEAT",
+        "upc": "27",
+        "quantityOnHand": 27,
+        "price": 10.0,
+        "createdAt": "2025-11-10T05:12:38.719429",
+        "updatedAt": "2025-11-10T05:12:38.719434"
+      },
+      {
+        "id": "3ae318bd-e771-46ae-a435-53a065b9e534",
+        "version": 0,
+        "beerName": "21st Amendment Watermelon Wheat Beer (2006)",
+        "beerStyle": "WHEAT",
+        "upc": "28",
+        "quantityOnHand": 28,
+        "price": 10.0,
+        "createdAt": "2025-11-10T05:12:38.720167",
+        "updatedAt": "2025-11-10T05:12:38.720172"
+      },
+      {
+        "id": "0ae8807d-e3c4-4be8-92aa-2db5a8ce89a0",
+        "version": 0,
+        "beerName": "21st Amendment IPA (2006)",
+        "beerStyle": "IPA",
+        "upc": "29",
+        "quantityOnHand": 29,
+        "price": 10.0,
+        "createdAt": "2025-11-10T05:12:38.721152",
+        "updatedAt": "2025-11-10T05:12:38.721157"
+      },
+      {
+        "id": "ad71f54d-fac4-4976-9450-13a500c0aba7",
+        "version": 0,
+        "beerName": "Brew Free! or Die IPA (2008)",
+        "beerStyle": "IPA",
+        "upc": "30",
+        "quantityOnHand": 30,
+        "price": 10.0,
+        "createdAt": "2025-11-10T05:12:38.72214",
+        "updatedAt": "2025-11-10T05:12:38.722145"
+      },
+      {
+        "id": "829b7104-2b7f-4cb4-bed7-ed1c5eb7c378",
+        "version": 0,
+        "beerName": "Brew Free! or Die IPA (2009)",
+        "beerStyle": "IPA",
+        "upc": "31",
+        "quantityOnHand": 31,
+        "price": 10.0,
+        "createdAt": "2025-11-10T05:12:38.724467",
+        "updatedAt": "2025-11-10T05:12:38.724488"
+      },
+      {
+        "id": "bb728cd6-330b-45ef-ba7c-71430820d9fb",
+        "version": 0,
+        "beerName": "Special Edition: Allies Win The War!",
+        "beerStyle": "PILSNER",
+        "upc": "32",
+        "quantityOnHand": 32,
+        "price": 10.0,
+        "createdAt": "2025-11-10T05:12:38.728145",
+        "updatedAt": "2025-11-10T05:12:38.728164"
+      },
+      {
+        "id": "7c1dda65-7ab0-4bb2-bf1b-a36a86d577d8",
+        "version": 0,
+        "beerName": "Hop Crisis",
+        "beerStyle": "IPA",
+        "upc": "33",
+        "quantityOnHand": 33,
+        "price": 10.0,
+        "createdAt": "2025-11-10T05:12:38.730769",
+        "updatedAt": "2025-11-10T05:12:38.730786"
+      },
+      {
+        "id": "ad255a4a-97b0-4bea-836f-63cc698e45e2",
+        "version": 0,
+        "beerName": "Bitter American (2011)",
+        "beerStyle": "ALE",
+        "upc": "34",
+        "quantityOnHand": 34,
+        "price": 10.0,
+        "createdAt": "2025-11-10T05:12:38.733612",
+        "updatedAt": "2025-11-10T05:12:38.733631"
+      },
+      {
+        "id": "24e959a0-8777-4337-ac28-ca2a8b7e62de",
+        "version": 0,
+        "beerName": "Fireside Chat (2010)",
+        "beerStyle": "WHEAT",
+        "upc": "35",
+        "quantityOnHand": 35,
+        "price": 10.0,
+        "createdAt": "2025-11-10T05:12:38.735467",
+        "updatedAt": "2025-11-10T05:12:38.735474"
+      },
+      {
+        "id": "0a8cdc70-280e-48e4-ac9f-db0f8338edf6",
+        "version": 0,
+        "beerName": "Back in Black",
+        "beerStyle": "ALE",
+        "upc": "36",
+        "quantityOnHand": 36,
+        "price": 10.0,
+        "createdAt": "2025-11-10T05:12:38.736978",
+        "updatedAt": "2025-11-10T05:12:38.736984"
+      }
+    ],
+    "pageable": {
+      "pageNumber": 0,
+      "pageSize": 25,
+      "sort": {
+        "unsorted": true,
+        "sorted": false,
+        "empty": true
+      },
+      "offset": 0,
+      "unpaged": false,
+      "paged": true
+    },
+    "totalElements": 2417,
+    "totalPages": 97,
+    "last": false,
+    "numberOfElements": 25,
+    "first": true,
+    "size": 25,
+    "number": 0,
+    "sort": {
+      "unsorted": true,
+      "sorted": false,
+      "empty": true
+    },
+    "empty": false
+  }
+}
