@@ -1,17 +1,21 @@
 package dev.dead.spring6restmvc.services;
 
 import dev.dead.spring6restmvc.entities.Beer;
+import dev.dead.spring6restmvc.events.BeerCreatedEvent;
 import dev.dead.spring6restmvc.mappers.BeerMapper;
 import dev.dead.spring6restmvc.models.BeerDTO;
 import dev.dead.spring6restmvc.models.BeerStyle;
 import dev.dead.spring6restmvc.repositories.BeerRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -27,18 +31,20 @@ import java.util.stream.Collectors;
 public class BeerServiceJPAImpl implements BeerService {
     private final BeerRepository beerRepository;
     private final BeerMapper beerMapper;
+    private final ApplicationEventPublisher applicationEventPublisher;
+    private final CacheManager cacheManager;
     private final static int DEFAULT_PAGE = 0;
     private final static int DEFAULT_PAGE_SIZE = 25;
-    private final CacheManager cacheManager;
 
-    @Cacheable(cacheNames = "beerCache", key = "#beerId", unless = "#result == null")
+    //@Cacheable(cacheNames = "beerCache", key = "#id", unless = "#result
+    // == null")
     @Override
     public Optional<BeerDTO> getBeerById(UUID id) {
         return Optional.ofNullable(beerMapper.beerToBeerDTO(beerRepository.findById(id)
                 .orElse(null)));
     }
 
-    @Cacheable(cacheNames = "beerListCache")
+    //@Cacheable(cacheNames = "beerListCache")
     @Override
     public Page<BeerDTO> getBeers(String beerName, BeerStyle beerStyle, Boolean showInventory, Integer pageNumber,
                                   Integer pageSize) {
@@ -95,20 +101,32 @@ public class BeerServiceJPAImpl implements BeerService {
         return beerRepository.findAllByBeerNameIsLikeIgnoreCase("%" + beerName + "%", pageRequest);
     }
 
+    private void clearCache(UUID beerId) {
+        if (cacheManager.getCache("beerCache") != null) {
+            cacheManager.getCache("beerCache")
+                    .evict(beerId);
+        }
+
+        if (cacheManager.getCache("beerListCache") != null) {
+            cacheManager.getCache("beerListCache")
+                    .clear();
+        }
+    }
     @Override
     public BeerDTO saveNewBeer(BeerDTO beerDTO) {
         log.debug("Save New Beer - JPA Impl of Beer Service");
-        Objects.requireNonNull(cacheManager.getCache("beerCache"))
-                .evict(beerDTO.getId());
-        Objects.requireNonNull(cacheManager.getCache("beerListCache"));
-        return beerMapper.beerToBeerDTO(beerRepository.saveAndFlush(beerMapper.beerDTOToBeer(beerDTO)));
+
+        var beer =
+                beerRepository.saveAndFlush(beerMapper.beerDTOToBeer(beerDTO));
+        applicationEventPublisher.publishEvent(new BeerCreatedEvent(
+                beer, SecurityContextHolder.getContext()
+                .getAuthentication()
+        ));
+        return beerMapper.beerToBeerDTO(beer);
     }
 
     @Override
     public Optional<BeerDTO> updateBeer(UUID beerId, BeerDTO beerDTO) {
-        Objects.requireNonNull(cacheManager.getCache("beerCache"))
-                .evict(beerDTO.getId());
-        Objects.requireNonNull(cacheManager.getCache("beerListCache"));
         return beerRepository.findById(beerId)
                 .map(foundBeer -> {
                     foundBeer.setBeerName(beerDTO.getBeerName());
@@ -122,9 +140,6 @@ public class BeerServiceJPAImpl implements BeerService {
 
     @Override
     public Boolean deleteBeerById(UUID beerId) {
-        Objects.requireNonNull(cacheManager.getCache("beerCache"))
-                .evict(beerId);
-        Objects.requireNonNull(cacheManager.getCache("beerListCache"));
         if (beerRepository.existsById(beerId)) {
             beerRepository.deleteById(beerId);
             beerRepository.flush();
@@ -136,9 +151,6 @@ public class BeerServiceJPAImpl implements BeerService {
 
     @Override
     public Optional<BeerDTO> patchBeerById(UUID beerId, BeerDTO beerDTO) {
-        Objects.requireNonNull(cacheManager.getCache("beerCache"))
-                .evict(beerDTO.getId());
-        Objects.requireNonNull(cacheManager.getCache("beerListCache"));
         return beerRepository.findById(beerId)
                 .map(foundBeer -> {
                     if (beerDTO.getBeerName() != null && StringUtils.hasText(beerDTO.getBeerName())) {

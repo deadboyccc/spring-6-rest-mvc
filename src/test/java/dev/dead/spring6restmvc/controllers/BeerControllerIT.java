@@ -2,6 +2,7 @@ package dev.dead.spring6restmvc.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.dead.spring6restmvc.entities.Beer;
+import dev.dead.spring6restmvc.events.BeerCreatedEvent;
 import dev.dead.spring6restmvc.mappers.BeerMapper;
 import dev.dead.spring6restmvc.models.BeerDTO;
 import dev.dead.spring6restmvc.models.BeerStyle;
@@ -16,6 +17,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.event.ApplicationEvents;
+import org.springframework.test.context.event.RecordApplicationEvents;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,8 +39,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @Slf4j
+@RecordApplicationEvents
 @SpringBootTest
 class BeerControllerIT {
+    @Autowired
+    ApplicationEvents applicationEvents;
+
     @Autowired
     BeerController beerController;
 
@@ -56,9 +63,22 @@ class BeerControllerIT {
 
     @BeforeEach
     void setUp() {
+
         mockMvc = MockMvcBuilders.webAppContextSetup(wac)
                 .apply(springSecurity())
                 .build();
+    }
+
+    @Test
+    void testCreateBeer() throws Exception {
+        mockMvc.perform(post(BeerController.BEER_BASE_URL)
+                        .with(BeerControllerTest.postProcessor)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(returnBeerDto())))
+                .andExpect(status().isCreated());
+        assertEquals(1
+                , applicationEvents.stream(BeerCreatedEvent.class)
+                        .count());
     }
 
     @Test
@@ -310,7 +330,7 @@ class BeerControllerIT {
     @Test
     void saveNewBeer() {
         BeerDTO beerDTO = returnBeerDto();
-        ResponseEntity responseEntity = beerController.addBeer(beerDTO);
+        var responseEntity = beerController.addBeer(beerDTO);
 
         assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
         assertNotNull(responseEntity.getHeaders()
