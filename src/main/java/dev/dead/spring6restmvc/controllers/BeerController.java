@@ -102,7 +102,6 @@ public class BeerController {
                 .build();
     }
 
-    @Cacheable(cacheNames = "beerCache", key = "#beerId", unless = "#result == null")
     @GetMapping(BEER_ID_URL)
     public BeerDTO getBeerById(@PathVariable("beerId") @NotNull UUID beerId) {
         log.debug("Get Beer by Id - in Controller. Id: {}", beerId);
