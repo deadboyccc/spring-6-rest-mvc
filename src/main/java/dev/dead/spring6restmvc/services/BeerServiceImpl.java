@@ -3,7 +3,6 @@ package dev.dead.spring6restmvc.services;
 import dev.dead.spring6restmvc.models.BeerDTO;
 import dev.dead.spring6restmvc.models.BeerStyle;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
@@ -74,7 +73,7 @@ public class BeerServiceImpl implements BeerService {
     }
 
     @Override
-    public @NotNull BeerDTO saveNewBeer(@NotNull BeerDTO beerDTO) {
+    public BeerDTO saveNewBeer(BeerDTO beerDTO) {
         log.debug("Save Beer - Service : {}", beerDTO.getBeerName());
         BeerDTO savedBeerDTO = BeerDTO.builder()
                 .id(UUID.randomUUID())
@@ -93,7 +92,7 @@ public class BeerServiceImpl implements BeerService {
     }
 
     @Override
-    public Optional<BeerDTO> updateBeer(UUID beerId, @NotNull BeerDTO beerDTO) {
+    public Optional<BeerDTO> updateBeer(UUID beerId, BeerDTO beerDTO) {
         log.debug("Update Beer - Service id: {}", beerDTO.getId());
         BeerDTO existingBeerDTO = beers.get(beerId);
         existingBeerDTO.setBeerName(beerDTO.getBeerName());
@@ -119,7 +118,7 @@ public class BeerServiceImpl implements BeerService {
     }
 
     @Override
-    public Optional<BeerDTO> patchBeerById(UUID beerId, @NotNull BeerDTO beerDTO) {
+    public Optional<BeerDTO> patchBeerById(UUID beerId, BeerDTO beerDTO) {
         log.debug("Patch Beer - Service id: {}", beerId);
         BeerDTO existingBeerDTO = beers.get(beerId);
         if (StringUtils.hasText(beerDTO.getBeerName())) {
@@ -147,7 +146,7 @@ public class BeerServiceImpl implements BeerService {
 
 
     @Override
-    public Optional<BeerDTO> getBeerById(@NotNull UUID id) {
+    public Optional<BeerDTO> getBeerById(UUID id) {
         log.debug("Get Beer by Id - in service. Id: {}", id);
         return Optional.of(beers.get(id));
     }

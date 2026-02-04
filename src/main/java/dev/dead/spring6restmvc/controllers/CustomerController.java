@@ -4,7 +4,6 @@ import dev.dead.spring6restmvc.models.CustomerDTO;
 import dev.dead.spring6restmvc.services.CustomerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,10 +18,11 @@ import java.util.UUID;
 public class CustomerController {
     public static final String CUSTOMER_BASE_URL = "/api/v1/customer";
     public static final String CUSTOMER_ID_URL = CUSTOMER_BASE_URL + "/{customerId}";
-    private final @NotNull CustomerService customerService;
+    private final CustomerService customerService;
 
     @PatchMapping(CUSTOMER_ID_URL)
-    public @NotNull ResponseEntity<CustomerDTO> patchCustomer(@PathVariable("customerId") UUID customerId,
+    public ResponseEntity<CustomerDTO> patchCustomer(
+            @PathVariable("customerId") UUID customerId,
                                                               @RequestBody CustomerDTO customerDTO) {
         log.debug("Patching customer with id - Controller {}", customerId);
         if (!customerService.patchCustomer(customerId, customerDTO)
@@ -34,7 +34,8 @@ public class CustomerController {
     }
 
     @DeleteMapping(CUSTOMER_ID_URL)
-    public @NotNull ResponseEntity deleteCustomerById(@PathVariable("customerId") UUID customerId) {
+    public ResponseEntity deleteCustomerById(
+            @PathVariable("customerId") UUID customerId) {
         log.debug("Delete customer by id - Controller {}", customerId);
         if (customerService.deleteCustomerById(customerId)) {
 
@@ -45,7 +46,8 @@ public class CustomerController {
     }
 
     @PutMapping(CUSTOMER_ID_URL)
-    public @NotNull ResponseEntity<CustomerDTO> updateCustomerById(@PathVariable("customerId") @NotNull UUID customerId,
+    public ResponseEntity<CustomerDTO> updateCustomerById(
+            @PathVariable("customerId") UUID customerId,
                                                                    @RequestBody CustomerDTO customerDTO) {
         if (!customerService.updateCustomerById(customerId, customerDTO)
                 .isEmpty()) {
@@ -75,7 +77,7 @@ public class CustomerController {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     @PostMapping(CUSTOMER_BASE_URL)
-    public @NotNull ResponseEntity createCustomer(@RequestBody @NotNull CustomerDTO customerDTO) {
+    public ResponseEntity createCustomer(@RequestBody CustomerDTO customerDTO) {
         log.debug("Create customer - Controller: {}", customerDTO.getCustomerName());
         CustomerDTO savedCustomerDTO = customerService.saveNewCustomer(customerDTO);
         HttpHeaders headers = new HttpHeaders();

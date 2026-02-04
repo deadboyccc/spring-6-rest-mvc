@@ -2,7 +2,6 @@ package dev.dead.spring6restmvc.services;
 
 import dev.dead.spring6restmvc.models.CustomerDTO;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -53,13 +52,13 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public @NotNull List<CustomerDTO> getCustomers() {
+    public List<CustomerDTO> getCustomers() {
         log.debug("Get customers - Service");
         return new ArrayList<>(customers.values());
     }
 
     @Override
-    public @NotNull CustomerDTO saveNewCustomer(@NotNull CustomerDTO customerDTO) {
+    public CustomerDTO saveNewCustomer(CustomerDTO customerDTO) {
         CustomerDTO savedCustomerDTO = CustomerDTO.builder()
                 .id(UUID.randomUUID())
                 .version(1)
@@ -74,7 +73,8 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Optional<CustomerDTO> updateCustomerById(UUID customerId, @NotNull CustomerDTO customerDTO) {
+    public Optional<CustomerDTO> updateCustomerById(UUID customerId,
+                                                    CustomerDTO customerDTO) {
         CustomerDTO existing = customers.get(customerId);
         existing.setCustomerName(customerDTO.getCustomerName());
         existing.setUpdatedAt(LocalDateTime.now());
@@ -95,7 +95,8 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Optional<CustomerDTO> patchCustomer(UUID customerId, @NotNull CustomerDTO customerDTO) {
+    public Optional<CustomerDTO> patchCustomer(UUID customerId,
+                                               CustomerDTO customerDTO) {
         log.debug("Patching customer by id - Service {}", customerId);
         var existing = customers.get(customerId);
 

@@ -1,7 +1,9 @@
 package dev.dead.spring6restmvc.playground;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import jakarta.annotation.Nullable;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Null;
 
 import java.util.Objects;
 import java.util.UUID;
