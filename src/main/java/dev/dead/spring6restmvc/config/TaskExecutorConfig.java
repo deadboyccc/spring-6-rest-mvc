@@ -16,6 +16,6 @@ import java.util.concurrent.Executors;
 public class TaskExecutorConfig {
     @Bean(TaskExecutionAutoConfiguration.APPLICATION_TASK_EXECUTOR_BEAN_NAME)
     public AsyncTaskExecutor asyncTaskExecutor() {
-        return new TaskExecutorAdapter(Executors.newVirtualThreadPerTaskExecutor());
+        return new TaskExecutorAdapter(Executors.newFixedThreadPool(10));
     }
 }
