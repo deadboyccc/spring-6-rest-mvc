@@ -1,6 +1,7 @@
 package dev.dead.spring6restmvc.mappers;
 
 import dev.dead.spring6restmvc.entities.Beer;
+import dev.dead.spring6restmvc.entities.BeerAudit;
 import dev.dead.spring6restmvc.models.BeerDTO;
 import org.mapstruct.Mapper;
 
@@ -9,4 +10,6 @@ public interface BeerMapper {
     Beer beerDTOToBeer(BeerDTO beerDTO);
 
     BeerDTO beerToBeerDTO(Beer beer);
+
+    BeerAudit BeerToBeerAudit(Beer beer);
 }
