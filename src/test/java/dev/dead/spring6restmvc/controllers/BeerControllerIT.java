@@ -6,6 +6,7 @@ import dev.dead.spring6restmvc.events.BeerCreatedEvent;
 import dev.dead.spring6restmvc.mappers.BeerMapper;
 import dev.dead.spring6restmvc.models.BeerDTO;
 import dev.dead.spring6restmvc.models.BeerStyle;
+import dev.dead.spring6restmvc.repositories.BeerAuditRepository;
 import dev.dead.spring6restmvc.repositories.BeerRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.hamcrest.core.IsNull;
@@ -43,6 +44,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 class BeerControllerIT {
     @Autowired
+    BeerAuditRepository beerAuditRepository;
+
+    @Autowired
     ApplicationEvents applicationEvents;
 
     @Autowired
@@ -79,6 +83,13 @@ class BeerControllerIT {
         assertEquals(1
                 , applicationEvents.stream(BeerCreatedEvent.class)
                         .count());
+
+        beerAuditRepository.findAll()
+                .stream()
+                .toList()
+                .forEach(audit -> {
+                    log.debug("audit: {}", audit);
+                });
     }
 
     @Test
