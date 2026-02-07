@@ -8,123 +8,89 @@ import dev.dead.spring6restmvc.models.BeerStyle;
 import dev.dead.spring6restmvc.repositories.BeerRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 @Primary
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class BeerServiceJPAImpl implements BeerService {
+
+    private static final int DEFAULT_PAGE = 0;
+    private static final int DEFAULT_PAGE_SIZE = 25;
+    private static final String BEER_CACHE = "beerCache";
+    private static final String BEER_LIST_CACHE = "beerListCache";
+
     private final BeerRepository beerRepository;
     private final BeerMapper beerMapper;
     private final ApplicationEventPublisher applicationEventPublisher;
-    private final CacheManager cacheManager;
-    private final static int DEFAULT_PAGE = 0;
-    private final static int DEFAULT_PAGE_SIZE = 25;
 
-    //@Cacheable(cacheNames = "beerCache", key = "#id", unless = "#result
-    // == null")
+    @Cacheable(cacheNames = BEER_CACHE, key = "#id", unless = "#result == null")
     @Override
     public Optional<BeerDTO> getBeerById(UUID id) {
-        return Optional.ofNullable(beerMapper.beerToBeerDTO(beerRepository.findById(id)
-                .orElse(null)));
+        return beerRepository.findById(id)
+                .map(beerMapper::beerToBeerDTO);
     }
 
-    //@Cacheable(cacheNames = "beerListCache")
+    @Cacheable(cacheNames = BEER_LIST_CACHE)
     @Override
-    public Page<BeerDTO> getBeers(String beerName, BeerStyle beerStyle, Boolean showInventory, Integer pageNumber,
-                                  Integer pageSize) {
-        log.debug("Get Beers - JPA Impl of Beer Service");
+    public Page<BeerDTO> getBeers(String beerName, BeerStyle beerStyle, Boolean showInventory, 
+                                  Integer pageNumber, Integer pageSize) {
         PageRequest pageRequest = buildPageRequest(pageNumber, pageSize);
         Page<Beer> beerPage;
-        // query params
+        
         if (StringUtils.hasText(beerName) && beerStyle == null) {
-            beerPage = listBeersByBeerName(beerName, pageRequest);
+            beerPage = beerRepository.findAllByBeerNameIsLikeIgnoreCase("%" + beerName + "%", pageRequest);
         } else if (!StringUtils.hasText(beerName) && beerStyle != null) {
-            beerPage = listBeersByBeerStyle(beerStyle, pageRequest);
+            beerPage = beerRepository.findAllByBeerStyle(beerStyle, pageRequest);
         } else if (StringUtils.hasText(beerName) && beerStyle != null) {
-            beerPage = listBeersByBeerNameAndBeerStyle(beerName, beerStyle, pageRequest);
-
+            beerPage = beerRepository.findAllByBeerNameIsLikeIgnoreCaseAndBeerStyle(
+                    "%" + beerName + "%", beerStyle, pageRequest);
         } else {
             beerPage = beerRepository.findAll(pageRequest);
         }
-        // masking
-        if (showInventory != null && !showInventory) {
-            log.debug("Showing inventory - JPA Impl of Beer Service: {}", showInventory);
+        
+        if (Boolean.FALSE.equals(showInventory)) {
             beerPage.forEach(beer -> beer.setQuantityOnHand(null));
         }
+        
         return beerPage.map(beerMapper::beerToBeerDTO);
     }
 
-    public PageRequest buildPageRequest(Integer pageNumber, Integer pageSize) {
-        int queryPageNumber;
-        int queryPageSize;
-
-        if (pageNumber != null && pageNumber > 0) {
-            queryPageNumber = pageNumber - 1;
-        } else {
-            queryPageNumber = DEFAULT_PAGE;
-        }
-
-        if (pageSize != null && pageSize > 0) {
-            queryPageSize = Math.min(pageSize, 1800);
-        } else {
-            queryPageSize = DEFAULT_PAGE_SIZE;
-        }
-
-        return PageRequest.of(queryPageNumber, queryPageSize);
-    }
-
-    private Page<Beer> listBeersByBeerNameAndBeerStyle(String beerName, BeerStyle beerStyle, PageRequest pageRequest) {
-        return beerRepository.findAllByBeerNameIsLikeIgnoreCaseAndBeerStyle("%" + beerName + "%", beerStyle, pageRequest);
-    }
-
-    public Page<Beer> listBeersByBeerStyle(BeerStyle beerStyle, PageRequest pageRequest) {
-        return beerRepository.findAllByBeerStyle(beerStyle, pageRequest);
-    }
-
-    public Page<Beer> listBeersByBeerName(String beerName, PageRequest pageRequest) {
-        return beerRepository.findAllByBeerNameIsLikeIgnoreCase("%" + beerName + "%", pageRequest);
-    }
-
-    private void clearCache(UUID beerId) {
-        if (cacheManager.getCache("beerCache") != null) {
-            cacheManager.getCache("beerCache")
-                    .evict(beerId);
-        }
-
-        if (cacheManager.getCache("beerListCache") != null) {
-            cacheManager.getCache("beerListCache")
-                    .clear();
-        }
-    }
+    @Transactional
+    @Caching(evict = {
+            @CacheEvict(cacheNames = BEER_LIST_CACHE, allEntries = true)
+    })
     @Override
     public BeerDTO saveNewBeer(BeerDTO beerDTO) {
-        log.debug("Save New Beer - JPA Impl of Beer Service");
-
-        var beer =
-                beerRepository.saveAndFlush(beerMapper.beerDTOToBeer(beerDTO));
-        applicationEventPublisher.publishEvent(new BeerCreatedEvent(
-                beer, SecurityContextHolder.getContext()
-                .getAuthentication()
-        ));
-        return beerMapper.beerToBeerDTO(beer);
+        Beer savedBeer = beerRepository.saveAndFlush(beerMapper.beerDTOToBeer(beerDTO));
+        
+        Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication())
+                .ifPresent(auth -> applicationEventPublisher.publishEvent(
+                        new BeerCreatedEvent(savedBeer, auth)));
+        
+        return beerMapper.beerToBeerDTO(savedBeer);
     }
 
+    @Transactional
+    @Caching(evict = {
+            @CacheEvict(cacheNames = BEER_CACHE, key = "#beerId"),
+            @CacheEvict(cacheNames = BEER_LIST_CACHE, allEntries = true)
+    })
     @Override
     public Optional<BeerDTO> updateBeer(UUID beerId, BeerDTO beerDTO) {
         return beerRepository.findById(beerId)
@@ -138,6 +104,11 @@ public class BeerServiceJPAImpl implements BeerService {
                 });
     }
 
+    @Transactional
+    @Caching(evict = {
+            @CacheEvict(cacheNames = BEER_CACHE, key = "#beerId"),
+            @CacheEvict(cacheNames = BEER_LIST_CACHE, allEntries = true)
+    })
     @Override
     public Boolean deleteBeerById(UUID beerId) {
         if (beerRepository.existsById(beerId)) {
@@ -146,30 +117,30 @@ public class BeerServiceJPAImpl implements BeerService {
             return true;
         }
         return false;
-
     }
 
+    @Transactional
+    @Caching(evict = {
+            @CacheEvict(cacheNames = BEER_CACHE, key = "#beerId"),
+            @CacheEvict(cacheNames = BEER_LIST_CACHE, allEntries = true)
+    })
     @Override
     public Optional<BeerDTO> patchBeerById(UUID beerId, BeerDTO beerDTO) {
         return beerRepository.findById(beerId)
                 .map(foundBeer -> {
-                    if (beerDTO.getBeerName() != null && StringUtils.hasText(beerDTO.getBeerName())) {
-                        foundBeer.setBeerName(beerDTO.getBeerName());
-                    }
-                    if (beerDTO.getBeerStyle() != null) {
-                        foundBeer.setBeerStyle(beerDTO.getBeerStyle());
-                    }
-                    if (beerDTO.getPrice() != null) {
-                        foundBeer.setPrice(beerDTO.getPrice());
-                    }
-                    if (beerDTO.getQuantityOnHand() != null) {
-                        foundBeer.setQuantityOnHand(beerDTO.getQuantityOnHand());
-                    }
-                    if (beerDTO.getUpc() != null && StringUtils.hasText(beerDTO.getUpc())) {
-                        foundBeer.setUpc(beerDTO.getUpc());
-                    }
+                    if (StringUtils.hasText(beerDTO.getBeerName())) foundBeer.setBeerName(beerDTO.getBeerName());
+                    if (beerDTO.getBeerStyle() != null) foundBeer.setBeerStyle(beerDTO.getBeerStyle());
+                    if (beerDTO.getPrice() != null) foundBeer.setPrice(beerDTO.getPrice());
+                    if (beerDTO.getQuantityOnHand() != null) foundBeer.setQuantityOnHand(beerDTO.getQuantityOnHand());
+                    if (StringUtils.hasText(beerDTO.getUpc())) foundBeer.setUpc(beerDTO.getUpc());
+                    
                     return beerMapper.beerToBeerDTO(beerRepository.saveAndFlush(foundBeer));
                 });
+    }
 
+    private PageRequest buildPageRequest(Integer pageNumber, Integer pageSize) {
+        int queryPageNumber = (pageNumber != null && pageNumber > 0) ? pageNumber - 1 : DEFAULT_PAGE;
+        int queryPageSize = (pageSize != null && pageSize > 0) ? Math.min(pageSize, 1000) : DEFAULT_PAGE_SIZE;
+        return PageRequest.of(queryPageNumber, queryPageSize);
     }
 }
