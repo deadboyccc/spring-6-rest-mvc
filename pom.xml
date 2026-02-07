@@ -29,7 +29,7 @@
     <properties>
         <java.version>17</java.version>
         <org.mapstruct.version>1.6.3</org.mapstruct.version>
-        <logbook.version>3.12.3</logbook.version>
+        <logbook.version>4.0.1</logbook.version>
     </properties>
     <dependencies>
         <dependency>
